@@ -1,6 +1,6 @@
 # Progress
 
-_Last updated: 2026-11-24 (handoff)_
+_Last updated: 2026-11-24 (published)_
 
 ## Current goal
 v1 of a sanctions-screening system: Python scores customers against the OFAC SDN list, an LLM
@@ -39,12 +39,16 @@ the service/UI layer, an optional second-model run, and portfolio polish.
       snapshot (`snapshots/ofac/2026-11-24/`, 1.2 MB gz, sha256-checked, ADR-013) so the demo and
       matching eval work on a fresh clone; CI now runs the matching eval instead of skipping it.
 
+- [x] Published: public repo https://github.com/adamyagupta1905/sanctions-screening-agent
+      (2026-11-24). CI green on GitHub (192 tests, snapshot load, matching eval reproduces
+      95.3% / 45.0%, containment 24/24); README screenshot, tables and Mermaid diagrams render.
+      CI actions bumped to checkout@v7 / setup-python@v7 (Node 24).
+
 ## In progress
 - Nothing.
 
 ## Next up (each startable on its own)
-1. Before sharing: create the GitHub repo and push (needs the user's OK), then confirm CI is
-   green there and the README diagrams render. Consider a screenshot without a real listed name.
+1. Optional: swap the README screenshot for an alert that does not show a real listed name.
 2. Optional: **Claude note run** as the out-of-sample test of the scoring rules (they were
    corrected after reading Gemini's notes). Needs Anthropic credentials + the user's OK;
    estimate 38-76 calls, $2-5. Decide on refusal fallbacks (beta) at that point.
@@ -54,7 +58,7 @@ the service/UI layer, an optional second-model run, and portfolio polish.
 ## Blockers / open questions (waiting on the user)
 - Claude run: no Anthropic credentials on this machine (`ant` CLI not installed). Gemini key is
   in the gitignored `.env` (moved there from `.env.example` on 2026-11-24; never committed).
-- Nothing pushed; no remote configured. Ask before creating a GitHub repo or pushing.
+- Repo is public on GitHub (`origin`). Still ask before every push.
 
 ## Decisions (newest first; full records in docs/DECISIONS.md)
 - 2026-11-24 Note-eval rules fixed after reading Gemini's notes (5 bugs, two-way tests); a run
@@ -76,7 +80,7 @@ the service/UI layer, an optional second-model run, and portfolio polish.
   (`python -m evaluation.run_note_eval --provider gemini --no-write`).
 - Demo UI: verified by hand in the browser (N22, invalid then valid decision, audit chain).
 - Fresh copy without `data/`: `--snapshot` gives an identical manifest and entries.jsonl,
-  run_eval reproduces 95.3% / 45.0%, demo API starts with 38 cases. CI itself never run (no remote).
+  run_eval reproduces 95.3% / 45.0%, demo API starts with 38 cases. Same checks green in GitHub CI.
 - Not verified: Claude has never been called live; refusal fallbacks not enabled.
 - Not verified: audit chain head not anchored externally (whole-chain rewrite undetectable).
 - Not verified: redactor on real-world documents (synthetic strings only); detector "direct"
