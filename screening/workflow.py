@@ -14,24 +14,30 @@ Who does what:
   a score or an outcome, so it cannot set one.
 - Human: the only node that sets a Disposition. The graph cannot reach "record" without it.
 
-Every node appends to `events`, the raw material for the audit log (next step): what
-ran, when, with which prompt version and model, and a hash of the exact prompt input.
+Every node appends an event to `events` and, if an AuditLog is given, writes it to the
+append-only audit log at the moment the node runs: what ran, when, for which case_ref,
+against which list snapshot, with which prompt version, model and prompt hash, and who
+decided what and why. Delivery is at-least-once: if the process dies after the audit
+write but before LangGraph saves its checkpoint, the node re-runs and logs again.
 """
 
 from __future__ import annotations
 
 import hashlib
 import operator
+import sqlite3
 from datetime import datetime, timezone
 from typing import Annotated, Any, TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from screening.case_note import PROMPT_VERSION, SYSTEM_PROMPT, check_case_note, retry_prompt, user_prompt
-from screening.context import CaseContext, CustomerDocument, build_case_context, render_for_prompt
+from screening.audit import AuditLog
+from screening.context import CaseContext, CustomerDocument, build_case_context, case_ref, render_for_prompt
 from screening.llm import LLMIncomplete, LLMRefusal, StructuredLLM
 from screening.matching import Matcher
 from screening.models import CaseNote, Customer, Disposition, SanctionsEntry, ScreeningResult
@@ -55,6 +61,7 @@ class ReviewDecision(BaseModel):
 
 
 class CaseState(TypedDict, total=False):
+    case_ref: str
     customer: Customer
     documents: list[CustomerDocument]
     result: ScreeningResult
@@ -68,8 +75,10 @@ class CaseState(TypedDict, total=False):
     events: Annotated[list[dict[str, Any]], operator.add]
 
 
-def _event(step: str, **details: Any) -> dict[str, Any]:
-    return {"step": step, "at": datetime.now(timezone.utc).isoformat(timespec="seconds"), **details}
+def sqlite_checkpointer(path: str) -> SqliteSaver:
+    """Persistent store for paused cases (survives restarts). Holds full case state,
+    including customer data: keep it in the same trust zone as the customer database."""
+    return SqliteSaver(sqlite3.connect(path, check_same_thread=False))
 
 
 def _sha256(text: str) -> str:
@@ -82,17 +91,29 @@ def build_workflow(
     llm: StructuredLLM,
     salt: bytes,
     checkpointer: Any | None = None,
+    audit: AuditLog | None = None,
+    list_snapshot: str | None = None,
 ):
+    """list_snapshot: e.g. the OFAC SDN.CSV sha256, recorded on every screening event."""
     model_name = getattr(llm, "model_name", type(llm).__name__)
 
+    def emit(step: str, ref: str, **details: Any) -> dict[str, Any]:
+        event = {"step": step, "case_ref": ref,
+                 "at": datetime.now(timezone.utc).isoformat(timespec="seconds"), **details}
+        if audit is not None:
+            audit.append(event)
+        return event
+
     def screen(state: CaseState) -> dict:
+        ref = case_ref(state["customer"].customer_id, salt)
         result = matcher.screen(state["customer"])
         top = result.candidates[0].score if result.candidates else None
         return {
+            "case_ref": ref,
             "result": result,
             "status": "alert" if result.alert else "no_alert",
-            "events": [_event("screen", alert=result.alert, top_score=top,
-                              n_candidates=len(result.candidates), threshold=result.threshold)],
+            "events": [emit("screen", ref, alert=result.alert, top_score=top, n_candidates=len(result.candidates),
+                            threshold=result.threshold, list_snapshot=list_snapshot)],
         }
 
     def build_context(state: CaseState) -> dict:
@@ -107,8 +128,8 @@ def build_workflow(
             "context": context,
             "rendered": rendered,
             "note_attempts": 0,
-            "events": [_event("build_context", case_ref=context.case_ref,
-                              redactions=context.redaction_counts, injection_flags=flags)],
+            "events": [emit("build_context", state["case_ref"],
+                            redactions=context.redaction_counts, injection_flags=flags)],
         }
 
     def draft_note(state: CaseState) -> dict:
@@ -127,7 +148,7 @@ def build_workflow(
             "note": None if new_problems else note,
             "note_problems": new_problems,
             "note_attempts": attempt,
-            "events": [_event("draft_note", attempt=attempt, model=model_name, prompt_version=PROMPT_VERSION,
+            "events": [emit("draft_note", state["case_ref"], attempt=attempt, model=model_name, prompt_version=PROMPT_VERSION,
                               prompt_sha256=_sha256(SYSTEM_PROMPT + "\n" + prompt),
                               passed_checks=not new_problems, problems=new_problems, note_dropped=dropped)],
         }
@@ -154,13 +175,13 @@ def build_workflow(
             except ValidationError as exc:
                 payload = {**payload, "decision_error": str(exc)}
         return {"decision": decision,
-                "events": [_event("human_review", reviewer=decision.reviewer,
+                "events": [emit("human_review", state["case_ref"], reviewer=decision.reviewer,
                                   disposition=decision.disposition.value, reason=decision.reason)]}
 
     def record(state: CaseState) -> dict:
         d = state["decision"]
         return {"status": d.disposition.value,
-                "events": [_event("record", disposition=d.disposition.value, reviewer=d.reviewer)]}
+                "events": [emit("record", state["case_ref"], disposition=d.disposition.value, reviewer=d.reviewer)]}
 
     def after_screen(state: CaseState) -> str:
         return "build_context" if state["result"].alert else END

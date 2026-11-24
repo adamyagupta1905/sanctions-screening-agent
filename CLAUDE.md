@@ -31,6 +31,7 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/context.py`: minimised `CaseContext` + `render_for_prompt`: the only data a model sees
 - `screening/case_note.py`: versioned case-note prompt + deterministic checks on every LLM note
 - `screening/workflow.py`: LangGraph graph (screen -> context -> note -> human interrupt -> record)
+- `screening/audit.py`: append-only (SQLite triggers), sha256-chained audit log; `verify()` finds tampering
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
 - `docs/EVALUATION.md`: latest eval write-up
@@ -48,7 +49,9 @@ reviewer makes the final decision, with every step written to an audit log.
 - Models only ever receive `render_for_prompt(CaseContext)`: no customer id, DOB or nationality
   (comparison results only), documents PII-redacted, all free text inside escaped `<data>` blocks.
   The redaction map never enters a prompt or a log sent off-machine.
-- Audit log is append-only: who/what/when/inputs-hash/model/prompt-version for each step.
+- Audit log is append-only and hash-chained; every event carries case_ref (never customer id),
+  step, time; screening events carry the list snapshot sha256. No raw customer data in events.
+- Case state (checkpointer SQLite) holds customer data: keep it under `data/` (gitignored).
 - Only public lists and synthetic customers. No real customer data, ever.
 - List data is kept as published (raw DOB text like "circa 1960"); a malformed file stops
   the load with an error; orphan rows are counted in the manifest, never silently dropped.

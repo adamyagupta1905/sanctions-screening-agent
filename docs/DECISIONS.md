@@ -106,3 +106,21 @@ Short records of choices that shape the system. Newest at the bottom.
   host the loop remotely; here the loop is deterministic and must run next to the data.
 - **Revisit if:** Evidence gathering becomes open-ended (e.g. adverse-media search), which
   is where model-chosen tool calls would earn their place.
+
+## ADR-008: SQLite audit log (append-only, hash-chained) + SQLite checkpointer
+- **Date:** 2026-11-24
+- **Decision:** Each workflow node writes its event to `audit_events` as it runs. SQLite
+  triggers reject UPDATE/DELETE; each row stores sha256(previous hash + canonical JSON), and
+  `verify()` reports the first broken row. Paused cases persist in LangGraph's `SqliteSaver`.
+  Events carry the keyed-hash case_ref, never the customer id, name, DOB or documents.
+- **Alternatives:** Reuse LangGraph checkpoints as the audit trail; Postgres; an external
+  log service; signing each row.
+- **Why:** Checkpoints are an engine detail (they hold full state incl. PII, and can be
+  pruned); an audit trail must be a separate, minimal, append-only record a reviewer or
+  regulator can read. SQLite needs no server and is enough for a single-node demo.
+  The hash chain makes silent edits detectable without key management.
+- **Limits:** Someone with file access can still delete the file or rewrite the whole chain
+  consistently; production would anchor the chain head externally (WORM storage or a signed
+  daily checkpoint). Delivery is at-least-once (a crash between audit write and checkpoint
+  can log a step twice). The checkpointer keeps full history incl. customer documents.
+- **Revisit if:** More than one writer process, or retention/deletion rules for case state.
