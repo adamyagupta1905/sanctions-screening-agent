@@ -190,3 +190,21 @@ Short records of choices that shape the system. Newest at the bottom.
   AI agent close a sanctions alert, which the design forbids: only a human decides.
 - **Revisit if:** MCP clients need streaming/remote access (switch transport to streamable-http
   behind auth).
+
+## ADR-013: Commit the OFAC snapshot behind every result
+- **Date:** 2026-11-24
+- **Decision:** `snapshots/ofac/2026-11-24/` holds the three OFAC legacy CSVs exactly as
+  received (`gzip -9 -n`, 1.2 MB) plus `snapshot.json` with the original URL, retrieval time
+  and the sha256 of each uncompressed file. `scripts.download_ofac --snapshot DIR` checks every
+  sha256 before parsing and writes `data/ofac/` with the original URL and time, so the manifest
+  matches the one the results were built on. `data/` stays gitignored.
+- **Alternatives:** Download-only (the demo refuses to start and the matching eval cannot run
+  once OFAC publishes an update, which happens often); commit `data/ofac/entries.jsonl`
+  (8.5 MB of derived data, and parser changes would not be re-applied); a trimmed demo-only list
+  (would change the snapshot sha256 and break the link to the committed results).
+- **Why:** A visitor on a fresh clone can run the demo and reproduce the held-out numbers, and
+  CI now runs the matching eval instead of skipping it. OFAC list data is public US government
+  data. `tests/test_ofac.py` ties the committed files to the sha256 in the answer key and the
+  note cases.
+- **Revisit if:** a new snapshot is adopted (add a new dated folder with a new answer key
+  version; keep this one for the existing results).

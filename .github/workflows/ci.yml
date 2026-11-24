@@ -19,5 +19,7 @@ jobs:
       - run: pip install -r requirements.txt
       # Offline suite only: no API key is available or needed in CI.
       - run: python -m pytest -q
-      - run: python -m evaluation.run_eval
+      # Committed OFAC snapshot (sha256-checked) so the held-out matching eval actually runs.
+      - run: python -m scripts.download_ofac --snapshot snapshots/ofac/2026-11-24
+      - run: python -m evaluation.run_eval --no-write
       - run: python -m evaluation.injection_eval --no-write

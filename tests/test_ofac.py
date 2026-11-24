@@ -119,3 +119,63 @@ def test_cp1252_bytes_are_decoded_and_recorded(tmp_path):
     manifest = run(tmp_path, fetch=_fake_fetch({"SDN.CSV": sdn, "ALT.CSV": ALT.encode()}), min_rows=1)
     assert manifest["files"]["SDN.CSV"]["encoding"] == "cp1252"
     assert "Mårten" in (tmp_path / "entries.jsonl").read_text(encoding="utf-8")
+
+
+# --- committed snapshot (--snapshot) ---------------------------------------------------
+
+import gzip  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+from scripts.download_ofac import main, snapshot_fetcher  # noqa: E402
+
+REPO = Path(__file__).resolve().parent.parent
+COMMITTED = REPO / "snapshots" / "ofac" / "2026-11-24"
+
+
+def _write_snapshot(directory, files, retrieved_at="2026-11-24T01:47:52+00:00"):
+    directory.mkdir(parents=True)
+    meta = {"retrieved_at": retrieved_at, "files": {}}
+    for name, raw in files.items():
+        (directory / f"{name}.gz").write_bytes(gzip.compress(raw))
+        meta["files"][name] = {"sha256": hashlib.sha256(raw).hexdigest()}
+    (directory / "snapshot.json").write_text(json.dumps(meta))
+
+
+def test_snapshot_load_keeps_original_url_time_and_sha(tmp_path):
+    files = {n: t.encode() for n, t in {"SDN.CSV": SDN, "ALT.CSV": ALT, "SDN_COMMENTS.CSV": COMMENTS}.items()}
+    _write_snapshot(tmp_path / "snap", files)
+    fetch, meta = snapshot_fetcher(tmp_path / "snap")
+    manifest = run(tmp_path / "out", fetch=fetch, min_rows=1,
+                   now=datetime.fromisoformat(meta["retrieved_at"]))
+    assert manifest["files"]["SDN.CSV"]["sha256"] == hashlib.sha256(files["SDN.CSV"]).hexdigest()
+    assert manifest["files"]["SDN.CSV"]["url"].startswith("https://")
+    assert manifest["retrieved_at"] == "2026-11-24T01:47:52+00:00"
+    assert manifest["raw_dir"] == "raw/20261124T014752Z"
+
+
+def test_snapshot_with_altered_file_stops_the_load(tmp_path):
+    files = {"SDN.CSV": SDN.encode(), "ALT.CSV": ALT.encode()}
+    _write_snapshot(tmp_path / "snap", files)
+    (tmp_path / "snap" / "ALT.CSV.gz").write_bytes(gzip.compress(ALT.replace("Martin", "Marty").encode()))
+    fetch, _ = snapshot_fetcher(tmp_path / "snap")
+    with pytest.raises(RuntimeError, match="ALT.CSV"):
+        run(tmp_path / "out", fetch=fetch, min_rows=1)
+    assert not (tmp_path / "out" / "entries.jsonl").exists()
+
+
+def test_snapshot_and_from_dir_are_exclusive(tmp_path):
+    with pytest.raises(SystemExit):
+        main(["--snapshot", str(tmp_path), "--from-dir", str(tmp_path), "--out", str(tmp_path / "o")])
+
+
+def test_committed_snapshot_is_the_one_every_result_was_built_on():
+    """The demo and the committed results all point at this snapshot; the files must hash to it."""
+    meta = json.loads((COMMITTED / "snapshot.json").read_text())
+    key = json.loads((REPO / "evaluation" / "answer_key.json").read_text())["ofac_snapshot"]
+    notes = json.loads((REPO / "evaluation" / "note_cases.json").read_text())["built_from"]["ofac_snapshot"]
+    assert meta["files"]["SDN.CSV"]["sha256"] == key["sdn_sha256"] == notes["sdn_sha256"]
+    assert meta["files"]["ALT.CSV"]["sha256"] == key["alt_sha256"] == notes["alt_sha256"]
+    assert meta["retrieved_at"] == key["retrieved_at"]
+    fetch, _ = snapshot_fetcher(COMMITTED)
+    for name in ("SDN.CSV", "ALT.CSV", "SDN_COMMENTS.CSV"):
+        fetch("https://example.test/" + name)  # raises if the bytes do not match snapshot.json

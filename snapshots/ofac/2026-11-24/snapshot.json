@@ -1,0 +1,33 @@
+{
+  "note": "Committed copy of the public OFAC SDN legacy CSVs used for every committed result and the key-free demo. Files are gzip -9 -n of the exact bytes received; sha256 is of the uncompressed bytes. Load with: python -m scripts.download_ofac --snapshot snapshots/ofac/2026-11-24",
+  "source": "OFAC SDN list (legacy CSV)",
+  "retrieved_at": "2026-11-24T01:47:52.506339+00:00",
+  "files": {
+    "SDN.CSV": {
+      "url": "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV",
+      "bytes": 5855269,
+      "sha256": "89b2a6d6d825d3a0a5033c9d523ef8a5e05a0b766ccff1ad934aea7436da49b9",
+      "encoding": "utf-8"
+    },
+    "ALT.CSV": {
+      "url": "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ALT.CSV",
+      "bytes": 1066818,
+      "sha256": "2e342dc26cd1df3e11efba14d54d61d9290e255b502667b5eb2244e203b3ff5a",
+      "encoding": "utf-8"
+    },
+    "SDN_COMMENTS.CSV": {
+      "url": "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN_COMMENTS.CSV",
+      "bytes": 48137,
+      "sha256": "8255ce1eb2b85e08bac9e378eb8b28c59ca4926a3645f9421502cc11d48b86f1",
+      "encoding": "utf-8"
+    }
+  },
+  "counts": {
+    "sdn_rows": 19629,
+    "alt_rows": 20257,
+    "comment_rows": 36,
+    "entries_written": 19629,
+    "orphan_alt_rows": 0,
+    "orphan_comment_rows": 0
+  }
+}

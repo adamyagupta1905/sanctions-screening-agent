@@ -2,6 +2,8 @@
 
 Run:  .venv/bin/python -m scripts.download_ofac            # live download
       .venv/bin/python -m scripts.download_ofac --from-dir DIR   # parse local copies
+      .venv/bin/python -m scripts.download_ofac --snapshot snapshots/ofac/2026-11-24
+          # committed snapshot behind every result and the demo (sha256-checked)
 
 Writes (all under data/, which is gitignored):
   data/ofac/raw/<UTC timestamp>/SDN.CSV, ALT.CSV, SDN_COMMENTS.CSV   exact bytes received
@@ -16,6 +18,7 @@ match can point back to the exact list snapshot (sha256) it was screened against
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import sys
@@ -120,15 +123,45 @@ def local_fetcher(directory: Path) -> Fetcher:
     return fetch
 
 
+def snapshot_fetcher(directory: Path) -> tuple[Fetcher, dict]:
+    """Read a committed snapshot: gzipped CSVs plus snapshot.json with the original
+    retrieval time and per-file sha256 of the uncompressed bytes. Every file is checked
+    against its recorded sha256 before parsing; a mismatch stops the load."""
+    meta = json.loads((directory / "snapshot.json").read_text())
+    expected = {name: info["sha256"] for name, info in meta["files"].items() if "sha256" in info}
+
+    def fetch(url: str) -> bytes:
+        name = url.rsplit("/", 1)[-1]
+        if name not in expected:
+            raise FileNotFoundError(f"{name} is not part of snapshot {directory}")
+        raw = gzip.decompress((directory / f"{name}.gz").read_bytes())
+        digest = hashlib.sha256(raw).hexdigest()
+        if digest != expected[name]:
+            raise RuntimeError(f"{name}: sha256 {digest[:12]}... does not match snapshot.json {expected[name][:12]}...")
+        return raw
+
+    return fetch, meta
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, default=Path("data/ofac"))
     parser.add_argument("--from-dir", type=Path, help="parse files already on disk instead of downloading")
+    parser.add_argument("--snapshot", type=Path, help="load a committed snapshot (gzipped, sha256-checked)")
     parser.add_argument("--base-url", default=BASE_URL)
     args = parser.parse_args(argv)
+    if args.from_dir and args.snapshot:
+        parser.error("use --from-dir or --snapshot, not both")
 
-    fetch = local_fetcher(args.from_dir) if args.from_dir else http_fetch
-    manifest = run(args.out, fetch=fetch, base_url=args.base_url if not args.from_dir else "local/")
+    if args.snapshot:
+        # Keep the original URL and retrieval time so the manifest matches the one the
+        # committed results were produced from.
+        fetch, meta = snapshot_fetcher(args.snapshot)
+        manifest = run(args.out, fetch=fetch, base_url=args.base_url,
+                       now=datetime.fromisoformat(meta["retrieved_at"]))
+    else:
+        fetch = local_fetcher(args.from_dir) if args.from_dir else http_fetch
+        manifest = run(args.out, fetch=fetch, base_url=args.base_url if not args.from_dir else "local/")
     print(json.dumps(manifest["counts"], indent=2))
     return 0
 

@@ -112,7 +112,7 @@ held-out run itself found no new code bugs.
 
 ## How to reproduce
 ```bash
-.venv/bin/python -m scripts.download_ofac          # must give SDN sha256 89b2a6d6...
+.venv/bin/python -m scripts.download_ofac --snapshot snapshots/ofac/2026-11-24   # SDN sha256 89b2a6d6...
 .venv/bin/python -m evaluation.run_eval
 ```
 A newer OFAC snapshot makes the runner stop (labels point at entry ids of this snapshot).

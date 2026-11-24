@@ -11,8 +11,11 @@ reviewer makes the final decision, with every step written to an audit log.
 - Injection/containment checks (deterministic, free): `.venv/bin/python -m evaluation.injection_eval`
 - False alerts by nationality (free): `.venv/bin/python -m evaluation.false_alerts_by_group`
 - Rebuild answer key (only with a new OFAC snapshot; bump KEY_VERSION): `.venv/bin/python -m evaluation.build_answer_key`
-- Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
-  (or `--from-dir DIR` to parse files already on disk)
+- Load the committed OFAC snapshot (offline; the demo and all results use it):
+  `.venv/bin/python -m scripts.download_ofac --snapshot snapshots/ofac/2026-11-24`
+- Download today's OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
+  (or `--from-dir DIR` to parse files already on disk). A new list breaks the demo and the eval
+  until the key is rebuilt; adopt it as a new dated folder under `snapshots/ofac/` (ADR-013).
 - Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
 - Run demo (no key, replays recorded Gemini notes), two terminals:
   `.venv/bin/uvicorn screening.service:app_from_env --factory --host 127.0.0.1 --port 8000`
@@ -51,8 +54,9 @@ reviewer makes the final decision, with every step written to an audit log.
   (38 frozen alerts, rule scoring, template baseline, record/replay keyed by prompt sha256)
 - `docs/EVALUATION.md`: latest eval write-up; `docs/MODEL_CARD.md`: numbers tested against results
   files by `tests/test_model_card.py` (update both together)
-- `docs/DECISIONS.md`: ADRs
-- `data/`: downloaded public lists (gitignored, regenerate with a script)
+- `docs/DECISIONS.md`: ADRs; `docs/ARCHITECTURE.md`: pipeline diagram + who does what; `docs/images/`: README screenshot
+- `snapshots/ofac/<date>/`: committed gzipped OFAC CSVs + `snapshot.json` (sha256 per file)
+- `data/`: working copies of lists, customers, demo state (gitignored, regenerate with a script)
 
 ## Invariants (never break these)
 - Python does all calculations; the model never does arithmetic.
@@ -88,4 +92,4 @@ reviewer makes the final decision, with every step written to an audit log.
 ## Conventions
 - Type hints and Pydantic models at module boundaries.
 - New behaviour comes with a test. Bugs found by evals get a regression test.
-- Never edit: `data/`, `evaluation/results/` (generated).
+- Never edit: `data/`, `evaluation/results/` (generated), `snapshots/` (as received).

@@ -34,11 +34,17 @@ the service/UI layer, an optional second-model run, and portfolio polish.
       Iran 1/36, Mexico 1/31, clean 0/250); `tests/test_model_card.py` ties every number to the
       results files (it caught a stale speed figure on first run).
 
+- [x] Portfolio-release pass: README top screen (screenshot, diagram, stack, why, results with
+      failures, limitations, docs index), `docs/ARCHITECTURE.md`. Committed the 24 Nov OFAC
+      snapshot (`snapshots/ofac/2026-11-24/`, 1.2 MB gz, sha256-checked, ADR-013) so the demo and
+      matching eval work on a fresh clone; CI now runs the matching eval instead of skipping it.
+
 ## In progress
 - Nothing.
 
 ## Next up (each startable on its own)
-1. Run `/portfolio-release` (README results, demo mode, secrets, CI) before sharing.
+1. Before sharing: create the GitHub repo and push (needs the user's OK), then confirm CI is
+   green there and the README diagrams render. Consider a screenshot without a real listed name.
 2. Optional: **Claude note run** as the out-of-sample test of the scoring rules (they were
    corrected after reading Gemini's notes). Needs Anthropic credentials + the user's OK;
    estimate 38-76 calls, $2-5. Decide on refusal fallbacks (beta) at that point.
@@ -63,12 +69,14 @@ the service/UI layer, an optional second-model run, and portfolio polish.
   (ADR-004). OFAC legacy CSV + manifest (ADR-003). One Pydantic schema end to end (ADR-002).
 
 ## Verification status (2026-11-24)
-- Tests: 188 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
+- Tests: 192 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
 - Matching eval: reproduces 95.3% / 45.0% recall (`python -m evaluation.run_eval --no-write`).
 - Injection checks: containment 24/24 (`python -m evaluation.injection_eval --no-write`).
 - Note eval replay: 0 harmful, 14/14 injections, no API call
   (`python -m evaluation.run_note_eval --provider gemini --no-write`).
 - Demo UI: verified by hand in the browser (N22, invalid then valid decision, audit chain).
+- Fresh copy without `data/`: `--snapshot` gives an identical manifest and entries.jsonl,
+  run_eval reproduces 95.3% / 45.0%, demo API starts with 38 cases. CI itself never run (no remote).
 - Not verified: Claude has never been called live; refusal fallbacks not enabled.
 - Not verified: audit chain head not anchored externally (whole-chain rewrite undetectable).
 - Not verified: redactor on real-world documents (synthetic strings only); detector "direct"
