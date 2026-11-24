@@ -49,6 +49,13 @@ Demo (no API key, no cost: replays recorded model notes), in two terminals:
 ```
 
 Open http://localhost:8501, pick an alert, read the note, clear or escalate, see the audit trail.
+
+MCP (for AI assistants, read-only: look up names, read cases and audit trails; it cannot decide):
+
+```json
+{"mcpServers": {"sanctions-screening": {
+  "command": "<repo>/.venv/bin/python", "args": ["-m", "screening.mcp_server"], "cwd": "<repo>"}}}
+```
 The demo needs the same OFAC snapshot the notes were recorded on (sha256 in `evaluation/note_cases.json`);
 a newer list download makes the demo refuse to start rather than replay mismatched cases.
 

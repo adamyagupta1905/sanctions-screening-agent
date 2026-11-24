@@ -175,3 +175,18 @@ Short records of choices that shape the system. Newest at the bottom.
   localhost), and two screenings of one customer shared a case_ref in the audit log with no
   way to tell runs apart (fixed: `run_id` on every event; regression test).
 - **Revisit if:** Multiple analysts or processes write concurrently (SQLite single-writer).
+
+## ADR-012: Read-only MCP server as a thin client of the HTTP API
+- **Date:** 2026-11-24
+- **Decision:** `screening/mcp_server.py` (MCP SDK 2.x `MCPServer`, stdio) exposes five tools:
+  `screen_name`, `get_case`, `get_case_audit`, `verify_audit_log`, `service_status`, all
+  annotated read-only, all calling the HTTP service. No tool can start, decide or edit a case.
+  A new `POST /lookup` endpoint backs `screen_name`; each lookup is audit-logged with a keyed
+  hash of the queried name (`adhoc_lookup`, case_ref `ADHOC`) and opens no case.
+- **Alternatives:** MCP server reading the SQLite files directly; exposing a decision tool
+  with a confirmation step.
+- **Why:** Going through the API reuses every rule (no PII in responses, audit logging) instead
+  of re-implementing them, and keeps one writer to the databases. A decision tool would let an
+  AI agent close a sanctions alert, which the design forbids: only a human decides.
+- **Revisit if:** MCP clients need streaming/remote access (switch transport to streamable-http
+  behind auth).

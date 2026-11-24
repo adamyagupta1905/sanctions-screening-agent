@@ -12,6 +12,9 @@ Endpoints
   POST /cases/{case_id}/decision     {"disposition": "cleared|escalated", "reviewer", "reason"}
   GET  /cases/{case_id}/audit        this case's audit trail
   GET  /audit/verify                 hash-chain check over the whole log
+  POST /lookup                       ad-hoc name check: {"full_name", "date_of_birth"?, "nationality"?}.
+                                     Not a screening of record (no case is opened), but it is
+                                     audit-logged like everything else.
 
 Design notes:
 - No endpoint lets anything but a reviewer's decision close a case, and there is no
@@ -24,9 +27,12 @@ Design notes:
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import os
 import uuid
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +55,12 @@ from screening.workflow import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class Lookup(BaseModel):
+    full_name: str
+    date_of_birth: date | None = None
+    nationality: str | None = None
+
+
 class StartCase(BaseModel):
     demo_case_id: str | None = None
     customer: Customer | None = None
@@ -67,8 +79,10 @@ def create_app(
 ) -> FastAPI:
     data_dir.mkdir(parents=True, exist_ok=True)
     audit = AuditLog(data_dir / "audit.sqlite")
+    matcher = Matcher(entries)
+    by_id = {e.entry_id: e for e in entries}
     workflow = build_workflow(
-        Matcher(entries), {e.entry_id: e for e in entries}, llm, salt,
+        matcher, by_id, llm, salt,
         checkpointer=sqlite_checkpointer(str(data_dir / "cases.sqlite")),
         audit=audit, list_snapshot=list_snapshot,
     )
@@ -139,6 +153,32 @@ def create_app(
         ref = values(case_id).get("case_ref")
         return [{"seq": r.seq, "step": r.step, "at": r.at, "event": r.event}
                 for r in audit.case_history(ref, run_id=case_id)]
+
+    @api.post("/lookup")
+    def lookup(body: Lookup) -> dict:
+        run_id = f"lookup-{uuid.uuid4().hex[:12]}"
+        customer = Customer(customer_id=run_id, full_name=body.full_name,
+                            date_of_birth=body.date_of_birth, nationality=body.nationality)
+        result = matcher.screen(customer)
+        # Keyed hash of the queried name: the log proves a lookup happened and what it found
+        # without storing the name itself.
+        name_ref = hmac_ref(body.full_name)
+        audit.append({"step": "adhoc_lookup", "case_ref": "ADHOC", "run_id": run_id,
+                      "at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                      "name_ref": name_ref, "alert": result.alert, "list_snapshot": list_snapshot,
+                      "top_entries": [c.entry_id for c in result.candidates[:5]]})
+        return {"run_id": run_id, "alert": result.alert, "threshold": result.threshold,
+                "note": "Ad-hoc lookup, not a screening of record. Open a case to review an alert.",
+                "candidates": [{
+                    "entry_id": c.entry_id, "score": c.score, "matched_on": c.matched_on,
+                    "name_source": c.name_source, "dob_check": c.dob_check,
+                    "dob_years_apart": c.dob_years_apart, "nationality_check": c.nationality_check,
+                    "list_primary_name": by_id[c.entry_id].primary_name,
+                    "list_programs": by_id[c.entry_id].programs,
+                } for c in result.candidates[:5]]}
+
+    def hmac_ref(text: str) -> str:
+        return hmac.new(salt, text.strip().lower().encode(), hashlib.sha256).hexdigest()[:16]
 
     @api.get("/audit/verify")
     def verify() -> dict:

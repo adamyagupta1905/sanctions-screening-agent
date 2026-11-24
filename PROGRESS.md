@@ -26,18 +26,20 @@ the service/UI layer, an optional second-model run, and portfolio polish.
       recorded, audit chain intact. Fixed while testing: UI listened on all interfaces (now
       localhost); audit could not separate two runs of one customer (now `run_id`).
 
+- [x] Read-only MCP server (ADR-012): 5 tools over the HTTP API, all `read_only_hint`, no decision
+      tool; new audited `POST /lookup`. Tested through the MCP layer and over real stdio against the
+      running demo (listed person found with exact DOB, clean name no alert, chain intact).
+
 ## In progress
 - Nothing.
 
 ## Next up (each startable on its own)
-1. **MCP server** exposing read-only tools (`screen_customer`, `get_case`, `get_audit_history`);
-   decisions stay in the UI, never an MCP tool (only a human decides).
-2. **Model card** (`docs/MODEL_CARD.md`): intended use, data, both eval results, limits.
+1. **Model card** (`docs/MODEL_CARD.md`): intended use, data, both eval results, limits.
    Then run `/portfolio-release`.
-3. Optional: **Claude note run** as the out-of-sample test of the scoring rules (they were
+2. Optional: **Claude note run** as the out-of-sample test of the scoring rules (they were
    corrected after reading Gemini's notes). Needs Anthropic credentials + the user's OK;
    estimate 38-76 calls, $2-5. Decide on refusal fallbacks (beta) at that point.
-4. Optional: **per-token fuzzy matching** for the 13/14 misses that combine a dropped name with
+3. Optional: **per-token fuzzy matching** for the 13/14 misses that combine a dropped name with
    a typo/transliteration. Design on dev seed 7 only; re-measure on key v1.
 
 ## Blockers / open questions (waiting on the user)
@@ -58,7 +60,7 @@ the service/UI layer, an optional second-model run, and portfolio polish.
   (ADR-004). OFAC legacy CSV + manifest (ADR-003). One Pydantic schema end to end (ADR-002).
 
 ## Verification status (2026-11-24)
-- Tests: 180 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
+- Tests: 185 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
 - Matching eval: reproduces 95.3% / 45.0% recall (`python -m evaluation.run_eval --no-write`).
 - Injection checks: containment 24/24 (`python -m evaluation.injection_eval --no-write`).
 - Note eval replay: 0 harmful, 14/14 injections, no API call
