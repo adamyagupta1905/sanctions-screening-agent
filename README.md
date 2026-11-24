@@ -12,12 +12,18 @@ All customers are synthetic. Only public sanctions data is used.
 
 ## Results
 
-| Metric | Exact-match baseline | Pipeline |
+Name screening on a held-out set of 1,000 synthetic customers against the real OFAC list
+(full write-up, failures and limits: [docs/EVALUATION.md](docs/EVALUATION.md)):
+
+| Metric | Exact-match baseline | Matcher |
 |---|---|---|
-| Match recall | not run | not run |
-| Match precision | not run | not run |
-| Case-note citation validity | n/a | not run |
-| Prompt-injection cases resisted | n/a | not run |
+| Recall, true matches (300) | 45.0% | **95.3%** |
+| Missed listed people (harmful) | 165 | **14** |
+| False alerts, look-alike names not on the list (300) | 0 | 35 |
+| False alerts, clean names (250) | 0 | 0 |
+| Hard negatives with DOB mismatch shown to reviewer | 150/150 | 150/150 |
+
+Not built yet: LLM case notes (citation validity, faithfulness) and prompt-injection tests.
 
 ## Quick start
 
@@ -29,4 +35,4 @@ cp .env.example .env                   # only needed for live runs; never commit
 
 ## Status
 
-Scaffold only. See [PROGRESS.md](PROGRESS.md) for the build plan and [docs/DECISIONS.md](docs/DECISIONS.md) for design decisions.
+Ingestion, synthetic data, matching and its evaluation are built; the LLM agent is next. See [PROGRESS.md](PROGRESS.md) for the build plan and [docs/DECISIONS.md](docs/DECISIONS.md) for design decisions.

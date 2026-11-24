@@ -188,3 +188,27 @@ def test_cli_run_writes_customers_and_manifest(tmp_path):
     assert len(lines) == 30
     assert manifest["ofac_snapshot"]["sdn_sha256"] == "aaa"
     assert manifest["summary"]["total"] == 30
+
+
+def test_lookalikes_recombine_same_nationality_and_never_equal_or_nest_a_list_name():
+    entries = [
+        SanctionsEntry(entry_id=str(i), primary_name=f"{sur}, {giv}", entity_type="individual",
+                       nationalities=["Freedonia"])
+        for i, (sur, giv) in enumerate([("STORMWING", "Ivo"), ("HERONSBANE", "Talon"),
+                                         ("QUILLFEATHER", "Marten"), ("ASHBROOK", "Petra")])
+    ]
+    gen = Generator(entries, seed=3)
+    out = gen.generate(20, true_share=0.0, hard_share=0.0, lookalike_share=0.5)
+    looks = [c for c in out if c.kind is CustomerKind.LOOKALIKE_CLEAN]
+    assert len(looks) == 10
+    list_keys = [token_key(e.primary_name) for e in entries]
+    for c in looks:
+        k = token_key(c.customer.full_name)
+        assert not c.should_alert and c.source_entry_id is None
+        assert c.customer.nationality == "Freedonia"
+        assert all(k != lk and not k <= lk and not lk <= k for lk in list_keys)
+
+
+def test_lookalikes_off_by_default_so_dev_set_is_unchanged():
+    out = Generator(_entries(), seed=7).generate(40)
+    assert not any(c.kind is CustomerKind.LOOKALIKE_CLEAN for c in out)

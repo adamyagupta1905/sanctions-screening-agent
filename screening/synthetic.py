@@ -8,6 +8,14 @@ Three kinds of customer, each with ground-truth labels set by construction:
 | hard_negative   | SDN name, DOB >= 10 years away,        | True         | False         |
 |                 | different/no nationality              |              |               |
 | clean           | random names from a fixed list        | False        | False         |
+| lookalike_clean | given name of listed person A +       | False        | False         |
+|                 | surname of listed person B (same      |              |               |
+|                 | nationality); not equal to, or a      |              |               |
+|                 | sub/superset of, any list name        |              |               |
+
+Look-alikes measure false-alert *workload*: they sound like list names (same regions,
+same naming conventions) without being anyone on the list. An alert on one is not a
+compliance failure, it is analyst time, which is the cost banks try to reduce.
 
 `should_alert` = the name is close enough that a screening system should raise it
 for review. `is_true_match` = it is actually the listed person. The gap between the
@@ -166,6 +174,7 @@ class CustomerKind(str, Enum):
     TRUE_MATCH = "true_match"
     HARD_NEGATIVE = "hard_negative"
     CLEAN = "clean"
+    LOOKALIKE_CLEAN = "lookalike_clean"  # list-style name, not on the list
 
 
 class LabelledCustomer(BaseModel):
@@ -206,6 +215,11 @@ class Generator:
             self._list_keys.add(token_key(e.primary_name))
             self._list_keys.update(token_key(a) for a in e.aliases + e.weak_aliases)
         self.rejected_clean_collisions = 0
+        self.rejected_lookalikes = 0
+        self._by_nationality: dict[str, list[SanctionsEntry]] = {}
+        for e in self.individuals:
+            if e.nationalities:
+                self._by_nationality.setdefault(e.nationalities[0], []).append(e)
 
     # true matches -------------------------------------------------------------------
     def true_match(self, entry: SanctionsEntry) -> LabelledCustomer:
@@ -305,8 +319,58 @@ class Generator:
             is_true_match=False,
         )
 
+    # look-alike clean customers -------------------------------------------------------
+    def _too_close_to_list(self, key: frozenset[str]) -> bool:
+        """Equal to, or a subset/superset of, any list name: that would be a real hit
+        (e.g. a listed person with a dropped name), so it cannot be labelled clean."""
+        return any(key == k or (len(k) >= 2 and (key <= k or k <= key)) for k in self._list_keys)
+
+    @staticmethod
+    def _split_name(primary: str) -> tuple[list[str], list[str]] | None:
+        if "," not in primary:
+            return None
+        surname, _, given = primary.partition(",")
+        s, g = surname.split(), given.split()
+        return (g, s) if g and s else None
+
+    def lookalike_clean(self, max_tries: int = 200) -> LabelledCustomer | None:
+        rng = self.rng
+        for _ in range(max_tries):
+            a = rng.choice(self.individuals)
+            parts_a = self._split_name(a.primary_name)
+            if parts_a is None:
+                continue
+            same_region = [
+                e for e in self._by_nationality.get(a.nationalities[0], []) if e is not a
+            ] if a.nationalities else []
+            if not same_region:
+                continue
+            b = rng.choice(same_region)
+            parts_b = self._split_name(b.primary_name)
+            if parts_b is None:
+                continue
+            name = " ".join(parts_a[0] + parts_b[1])
+            if self._too_close_to_list(token_key(name)):
+                self.rejected_lookalikes += 1
+                continue
+            return LabelledCustomer(
+                customer=Customer(
+                    customer_id="pending",  # numbered after shuffle
+                    full_name=customer_style(name),
+                    date_of_birth=_random_date_in_year(rng.randint(1945, 2003), rng),
+                    nationality=a.nationalities[0],
+                ),
+                kind=CustomerKind.LOOKALIKE_CLEAN,
+                should_alert=False,
+                is_true_match=False,
+            )
+        return None
+
     # batch ----------------------------------------------------------------------------
-    def generate(self, n: int, true_share: float = 0.4, hard_share: float = 0.2) -> list[LabelledCustomer]:
+    def generate(
+        self, n: int, true_share: float = 0.4, hard_share: float = 0.2, lookalike_share: float = 0.0
+    ) -> list[LabelledCustomer]:
+        """lookalike_share defaults to 0 so the dev set (seed 7) stays byte-identical."""
         if not self.individuals:
             raise ValueError("No individuals in the list; cannot build true matches.")
         n_true, n_hard = round(n * true_share), round(n * hard_share)
@@ -319,6 +383,12 @@ class Generator:
                 break
             if (hn := self.hard_negative(entry)) is not None:
                 out.append(hn)
+        n_look = round(n * lookalike_share)
+        while sum(c.kind is CustomerKind.LOOKALIKE_CLEAN for c in out) < n_look:
+            lc = self.lookalike_clean()
+            if lc is None:
+                raise RuntimeError("Could not build enough look-alike customers from this list.")
+            out.append(lc)
         while len(out) < n:
             out.append(self.clean())
         # Shuffle, then number: neither position nor id may reveal the kind.

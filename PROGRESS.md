@@ -29,6 +29,10 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       + `ExactBaseline`. Found and fixed a prefilter bug that could silently drop candidates
       (token_set is not always >= token_sort); regression test added.
 
+- [x] Formal held-out eval (docs/EVALUATION.md): answer key v1, seed 2027, 1,000 customers
+      incl. 300 new look-alike clean customers. Matcher vs exact baseline: true-match recall
+      95.3% vs 45.0%, missed listed people 14 vs 165, look-alike false alerts 35/300 vs 0.
+
 ## Preliminary dev numbers (seed 7, n=500, threshold 0.88) - NOT the eval result
 Tuning set only; the reported eval must use a different seed. Recall = source entry among
 candidates at >= threshold. Script was a scratch check, formal version comes in the eval step.
@@ -56,9 +60,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - Entity types differ: customer screening should match individuals vs. individuals first.
 - Strong aliases can be a completely different name (e.g. a nom de guerre): token similarity
   to the primary name will miss them, so the matcher must score every alias separately.
-- Clean customers are too easy: names come from a pool unlike most list names, so "0 false
-  alerts" says little. Add a harder clean set (common names from the same regions as the
-  list, checked not to be listed) before claiming a false-positive rate.
+- Done: look-alike clean set added (35/300 false alerts at 0.88).
 - Transliteration is rare in the generated set (17/200): if recall on that tag matters,
   generate a larger set or oversample entries whose names hit the variant table.
 
@@ -66,7 +68,8 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 1. ~~Data download + parse~~ done.
 2. ~~Synthetic customers generator~~ done.
 3. ~~Deterministic matching~~ done (dev numbers above).
-4. Answer key + eval (`/llm-eval`): precision/recall of matching vs. baseline, committed results.
+4. ~~Answer key + eval~~ done for matching. Optional follow-up: per-token fuzzy matching for the
+   dropped-name + typo misses (design on dev seed 7, re-measure on key v1).
 5. PII redaction + prompt-injection guard for untrusted text; injection cases in the answer key.
 6. LangGraph workflow: screen -> gather evidence -> draft CaseNote -> human interrupt -> record disposition.
 7. Audit log (SQLite, append-only) with model, prompt version and input hashes.
@@ -78,6 +81,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-24 Held-out key (seed 2027) frozen and committed; threshold stays 0.88 from dev. **Why:** no tuning on the reported set.
 - 2026-11-23 Name-only alerts, blended fuzzy score, DOB/nationality as evidence. (ADR-005)
 - 2026-11-23 Two labels per customer (should_alert, is_true_match); rule-built hard negatives. (ADR-004)
 - 2026-11-23 OFAC via legacy CSV + provenance manifest; DOBs kept as raw text. (ADR-003)
@@ -86,8 +90,9 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 60 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
-- Evals: not built (answer key has 0 cases)
+- Tests: 70 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Evals: matching eval run 2026-11-24 on key v1 (deterministic, no model); results in
+  `evaluation/results/matching_key-v1_2026-11-24.json`. LLM evals: not built.
 - Not verified: `ClaudeLLM` has never made a live API call (tested only with a fake client).
 - Verified live: OFAC URLs and layout (2026-11-24). `--from-dir` run manually, no unit test.
 - Not verified: weak-alias/DOB/nationality extraction checked by counts only, not hand-audited.

@@ -7,7 +7,8 @@ reviewer makes the final decision, with every step written to an audit log.
 ## Commands
 - Setup: `python3.13 -m venv .venv && .venv/bin/pip install -r requirements.txt`
 - Tests (offline, no key, seconds): `.venv/bin/python -m pytest -q`
-- Offline eval: `.venv/bin/python -m evaluation.run_eval`
+- Offline eval (deterministic, free; needs OFAC data): `.venv/bin/python -m evaluation.run_eval`
+- Rebuild answer key (only with a new OFAC snapshot; bump KEY_VERSION): `.venv/bin/python -m evaluation.build_answer_key`
 - Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
   (or `--from-dir DIR` to parse files already on disk)
 - Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
@@ -25,7 +26,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/synthetic.py`: labelled synthetic customers (true_match / hard_negative / clean)
 - `scripts/generate_customers.py`: writes `data/synthetic/customers.jsonl` + manifest (seed, OFAC sha256)
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
-- `evaluation/`: answer key, eval scripts, committed results
+- `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
+- `docs/EVALUATION.md`: latest eval write-up
 - `docs/DECISIONS.md`: ADRs
 - `data/`: downloaded public lists (gitignored, regenerate with a script)
 

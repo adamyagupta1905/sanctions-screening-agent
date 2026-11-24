@@ -1,0 +1,2563 @@
+{
+ "run_at": "2026-11-24T02:07:52+00:00",
+ "git_commit": "156bb17-dirty",
+ "answer_key": {
+  "version": 1,
+  "seed": 2027,
+  "n": 1000
+ },
+ "ofac_snapshot": {
+  "retrieved_at": "2026-11-24T01:47:52.506339+00:00",
+  "sdn_sha256": "89b2a6d6d825d3a0a5033c9d523ef8a5e05a0b766ccff1ad934aea7436da49b9",
+  "alt_sha256": "2e342dc26cd1df3e11efba14d54d61d9290e255b502667b5eb2244e203b3ff5a"
+ },
+ "snapshot_matches_key": true,
+ "models_used": "none (deterministic Python matcher)",
+ "matcher": {
+  "threshold": 0.88,
+  "threshold_source": "chosen on dev seed 7, not tuned on this key",
+  "seconds_total": 31.66,
+  "ms_per_customer": 31.7,
+  "metrics": {
+   "threshold": 0.88,
+   "n_cases": 1000,
+   "n_by_kind": {
+    "clean": 250,
+    "hard_negative": 150,
+    "lookalike_clean": 300,
+    "true_match": 300
+   },
+   "recall_should_alert": 0.9689,
+   "recall_true_match": 0.9533,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 14,
+   "missed_true_match_cases": [
+    {
+     "customer_id": "C00005",
+     "customer_name": "Nader Ordouadi",
+     "source_entry_id": "26384",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00043",
+     "customer_name": "Abdul Mnaan",
+     "source_entry_id": "25401",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00064",
+     "customer_name": "Arkady Dimenshttein",
+     "source_entry_id": "50232",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00075",
+     "customer_name": "Sayed Musavir",
+     "source_entry_id": "28693",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00139",
+     "customer_name": "Gilberto Torrres",
+     "source_entry_id": "18958",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00148",
+     "customer_name": "Ali Adan",
+     "source_entry_id": "34476",
+     "source_score": null,
+     "alerted_on_other_entry": true,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00166",
+     "customer_name": "Mohamed Gill",
+     "source_entry_id": "16994",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00175",
+     "customer_name": "Shah Baarkzai",
+     "source_entry_id": "13124",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00213",
+     "customer_name": "Usamah 'Abd-Al-Wahid Beklacem",
+     "source_entry_id": "48699",
+     "source_score": 0.806,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00461",
+     "customer_name": "Muhammad Nayef Maged",
+     "source_entry_id": "56936",
+     "source_score": 0.8718,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00493",
+     "customer_name": "Kyrylo Koalchuk",
+     "source_entry_id": "21164",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00611",
+     "customer_name": "Abdelkairm Husayn Al Nasser",
+     "source_entry_id": "6919",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00708",
+     "customer_name": "Oleg Matytin",
+     "source_entry_id": "41012",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00888",
+     "customer_name": "Dmitry Mannsurov",
+     "source_entry_id": "21167",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "list_dob_year_only"
+     ]
+    }
+   ],
+   "recall_true_match_by_perturbation": {
+    "customer_dob_missing": {
+     "n": 29,
+     "recall": 0.931
+    },
+    "drop_token": {
+     "n": 74,
+     "recall": 0.8243
+    },
+    "list_dob_missing": {
+     "n": 13,
+     "recall": 0.9231
+    },
+    "list_dob_year_only": {
+     "n": 23,
+     "recall": 0.8696
+    },
+    "punct": {
+     "n": 149,
+     "recall": 0.953
+    },
+    "reorder": {
+     "n": 300,
+     "recall": 0.9533
+    },
+    "strong_alias": {
+     "n": 30,
+     "recall": 0.8667
+    },
+    "transliteration": {
+     "n": 25,
+     "recall": 0.8
+    },
+    "typo": {
+     "n": 111,
+     "recall": 0.8919
+    }
+   },
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 35,
+    "rate": 0.1167
+   },
+   "alerts_per_100_customers": 47.2,
+   "candidates_per_alert": 1.1292,
+   "dob_evidence_true_match": {
+    "exact": 230,
+    "not_alerted": 14,
+    "unknown": 39,
+    "within_span": 17
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  }
+ },
+ "baseline": {
+  "name": "ExactBaseline",
+  "metrics": {
+   "threshold": 1.0,
+   "n_cases": 1000,
+   "n_by_kind": {
+    "clean": 250,
+    "hard_negative": 150,
+    "lookalike_clean": 300,
+    "true_match": 300
+   },
+   "recall_should_alert": 0.6333,
+   "recall_true_match": 0.45,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 165,
+   "missed_true_match_cases": [
+    {
+     "customer_id": "C00001",
+     "customer_name": "Aleksandr Aleksanrovich Moskovsky",
+     "source_entry_id": "41071",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00003",
+     "customer_name": "Nikolay Vaasilievich Kolomeitsev",
+     "source_entry_id": "35228",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00005",
+     "customer_name": "Nader Ordouadi",
+     "source_entry_id": "26384",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00006",
+     "customer_name": "Ruslan Aleksandrovich Peretyako",
+     "source_entry_id": "46788",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00007",
+     "customer_name": "Valntina Vladimirovna Tereshkova",
+     "source_entry_id": "37374",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00012",
+     "customer_name": "Osscar Enrique Moreno Orozco",
+     "source_entry_id": "37263",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00018",
+     "customer_name": "Jeuss Alfredo Guzman Salazar",
+     "source_entry_id": "13120",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00024",
+     "customer_name": "Anita Mconald Rodriguez",
+     "source_entry_id": "56737",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00032",
+     "customer_name": "Mostafa Rostaami Sani",
+     "source_entry_id": "56683",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00037",
+     "customer_name": "Iddris 'Ali 'Awwad Al-Fay",
+     "source_entry_id": "31952",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00043",
+     "customer_name": "Abdul Mnaan",
+     "source_entry_id": "25401",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00046",
+     "customer_name": "Aleksandr Sergeyevich Drozdvo",
+     "source_entry_id": "35613",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00051",
+     "customer_name": "Aliaksandr Zharski",
+     "source_entry_id": "50192",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00064",
+     "customer_name": "Arkady Dimenshttein",
+     "source_entry_id": "50232",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00075",
+     "customer_name": "Sayed Musavir",
+     "source_entry_id": "28693",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00082",
+     "customer_name": "Alex Afolabi Ogushakin",
+     "source_entry_id": "28962",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00093",
+     "customer_name": "Aleksandr Vyacheslavovich Demin",
+     "source_entry_id": "37315",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00099",
+     "customer_name": "Yong Jong",
+     "source_entry_id": "37516",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00101",
+     "customer_name": "Alyaksadnr Ryhorovich Lukashenka",
+     "source_entry_id": "9760",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00107",
+     "customer_name": "Mostafa Ronkifard",
+     "source_entry_id": "57388",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00108",
+     "customer_name": "Viktor Yatsennko",
+     "source_entry_id": "20138",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00111",
+     "customer_name": "Antonio Cervantes",
+     "source_entry_id": "20109",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00124",
+     "customer_name": "Marcos Arturo Beltran Leyav",
+     "source_entry_id": "10899",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00128",
+     "customer_name": "Alimzhan Tursunovich Tokhtakhunoov",
+     "source_entry_id": "23230",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00138",
+     "customer_name": "Paola Luna",
+     "source_entry_id": "9414",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00139",
+     "customer_name": "Gilberto Torrres",
+     "source_entry_id": "18958",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00148",
+     "customer_name": "Ali Adan",
+     "source_entry_id": "34476",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00150",
+     "customer_name": "Abel Kanddiho",
+     "source_entry_id": "33946",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00166",
+     "customer_name": "Mohamed Gill",
+     "source_entry_id": "16994",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00175",
+     "customer_name": "Shah Baarkzai",
+     "source_entry_id": "13124",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00189",
+     "customer_name": "Igor Nikolaeivch Zaviyalov",
+     "source_entry_id": "37872",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00193",
+     "customer_name": "Rafael Blanco Marrero",
+     "source_entry_id": "27041",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00196",
+     "customer_name": "Haji Khan",
+     "source_entry_id": "12588",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00200",
+     "customer_name": "Aleksey Alekseevich Naydeko",
+     "source_entry_id": "26506",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00209",
+     "customer_name": "Mohammed Khawajah",
+     "source_entry_id": "42396",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "transliteration",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00213",
+     "customer_name": "Usamah 'Abd-Al-Wahid Beklacem",
+     "source_entry_id": "48699",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00222",
+     "customer_name": "Aly Akbar Rashidi",
+     "source_entry_id": "38417",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "transliteration",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00229",
+     "customer_name": "Khalli Ahmad Haqqani",
+     "source_entry_id": "12561",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00231",
+     "customer_name": "Eena Aleksandrovna Pereselyak",
+     "source_entry_id": "49509",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00237",
+     "customer_name": "Aliaksandr Zimousky",
+     "source_entry_id": "9762",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00249",
+     "customer_name": "Viktor Netyksho",
+     "source_entry_id": "26180",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00251",
+     "customer_name": "Muhammad Dar",
+     "source_entry_id": "24245",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00258",
+     "customer_name": "Vincenzo Dmearia",
+     "source_entry_id": "58796",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00260",
+     "customer_name": "Nikolay Brykin",
+     "source_entry_id": "35568",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00279",
+     "customer_name": "Olga Timofeyeva",
+     "source_entry_id": "37375",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00298",
+     "customer_name": "Petr Savchnko",
+     "source_entry_id": "17246",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00300",
+     "customer_name": "Jason Antonnio Yang Lopez",
+     "source_entry_id": "38498",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00303",
+     "customer_name": "Parviz Absaalan",
+     "source_entry_id": "42537",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00315",
+     "customer_name": "Smaer Al Dana",
+     "source_entry_id": "29075",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00319",
+     "customer_name": "Ahmed M. Asseri",
+     "source_entry_id": "31162",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00320",
+     "customer_name": "Artemis Arteemiou",
+     "source_entry_id": "50541",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00324",
+     "customer_name": "Moises Rivera Luna",
+     "source_entry_id": "15973",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00325",
+     "customer_name": "Jihad Mohhammed Qansu",
+     "source_entry_id": "23663",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00338",
+     "customer_name": "Ahmed Mohammed Harouun",
+     "source_entry_id": "10154",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "transliteration",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00346",
+     "customer_name": "Celia Margarita Ryes Ochoa",
+     "source_entry_id": "56664",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00366",
+     "customer_name": "Sayf Abdulrab Al Hayashi",
+     "source_entry_id": "23050",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00374",
+     "customer_name": "Piotr Piatrovihc Miklashevich",
+     "source_entry_id": "10136",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "list_dob_year_only",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00382",
+     "customer_name": "Anatoly Braverman",
+     "source_entry_id": "35968",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00388",
+     "customer_name": "Abu Hama Al Masri",
+     "source_entry_id": "7210",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00406",
+     "customer_name": "Lourdes Suarez Anderson",
+     "source_entry_id": "22254",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00415",
+     "customer_name": "Juan Pablo Erenas",
+     "source_entry_id": "46488",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00423",
+     "customer_name": "Christopher Kinahan",
+     "source_entry_id": "34980",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00425",
+     "customer_name": "Abu Al Muhandis",
+     "source_entry_id": "11461",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00427",
+     "customer_name": "Abdel Qader Al Shami",
+     "source_entry_id": "30626",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00433",
+     "customer_name": "Mufti Rahim",
+     "source_entry_id": "11970",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00436",
+     "customer_name": "Mohaamed Amine Akli",
+     "source_entry_id": "7827",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00449",
+     "customer_name": "Ricardo Jose Menendez Priteo",
+     "source_entry_id": "51270",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00450",
+     "customer_name": "Adrian Aguaoy",
+     "source_entry_id": "48050",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00461",
+     "customer_name": "Muhammad Nayef Maged",
+     "source_entry_id": "56936",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00467",
+     "customer_name": "Harmohan Hakimzada",
+     "source_entry_id": "21844",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00478",
+     "customer_name": "Walid Hamid Taawfiq Al Tikriti",
+     "source_entry_id": "7868",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00489",
+     "customer_name": "Anton Andreyev",
+     "source_entry_id": "29703",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00493",
+     "customer_name": "Kyrylo Koalchuk",
+     "source_entry_id": "21164",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00501",
+     "customer_name": "Yelena Khimnia",
+     "source_entry_id": "15882",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00505",
+     "customer_name": "Maria Vasilkova",
+     "source_entry_id": "35578",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00511",
+     "customer_name": "Leobarddo Garcia Corrales",
+     "source_entry_id": "43376",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00515",
+     "customer_name": "Eveny Viktorovich Gladkikh",
+     "source_entry_id": "35256",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00522",
+     "customer_name": "Sergei Ivanovich Menyaiilo",
+     "source_entry_id": "16934",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00538",
+     "customer_name": "Gebreil Ibrahim Fediel",
+     "source_entry_id": "55422",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00548",
+     "customer_name": "Fatemeh Azarkhavarani",
+     "source_entry_id": "55287",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00550",
+     "customer_name": "Irahim Amin Al Sayyid",
+     "source_entry_id": "24519",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00561",
+     "customer_name": "Mohammed Abd Al Qadir Mutni Assaf Al Rawi",
+     "source_entry_id": "26715",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00563",
+     "customer_name": "Mohammad Hsham Abu-Ghazalah",
+     "source_entry_id": "12919",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00565",
+     "customer_name": "James Mark",
+     "source_entry_id": "43516",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "drop_token",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00575",
+     "customer_name": "Anatoly Zhamaloich Bifov",
+     "source_entry_id": "35399",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00589",
+     "customer_name": "Luis Alfonso Torres Trores",
+     "source_entry_id": "58705",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00595",
+     "customer_name": "Viktoria Valeriyevna Abramchenko",
+     "source_entry_id": "43234",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00597",
+     "customer_name": "Andryah Samir Mushantaf",
+     "source_entry_id": "48326",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00598",
+     "customer_name": "Hassan Othman",
+     "source_entry_id": "31792",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00601",
+     "customer_name": "Nikolai Sergeyevich Valuev",
+     "source_entry_id": "35577",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00608",
+     "customer_name": "Yehen Skriabin",
+     "source_entry_id": "51309",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00611",
+     "customer_name": "Abdelkairm Husayn Al Nasser",
+     "source_entry_id": "6919",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00618",
+     "customer_name": "Hussein Ahmed 'Abdallah Hussein Al-Dammami",
+     "source_entry_id": "48159",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00619",
+     "customer_name": "Muhammad Soltanmohammadi",
+     "source_entry_id": "30285",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00624",
+     "customer_name": "Blanca Aguirre Sanchez",
+     "source_entry_id": "10626",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00625",
+     "customer_name": "Abdelilha Himich",
+     "source_entry_id": "21002",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00628",
+     "customer_name": "Allah Azizi",
+     "source_entry_id": "40157",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00633",
+     "customer_name": "Kevin Gomez",
+     "source_entry_id": "48391",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00637",
+     "customer_name": "Abd Al Latif Saad",
+     "source_entry_id": "23674",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00638",
+     "customer_name": "Hasssan Pelarak",
+     "source_entry_id": "28695",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00643",
+     "customer_name": "Vyacheslav Volodin",
+     "source_entry_id": "16714",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00645",
+     "customer_name": "Natan Viner",
+     "source_entry_id": "41511",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "drop_token",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00648",
+     "customer_name": "Svetlana Pertovna Emelyanova",
+     "source_entry_id": "36381",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00665",
+     "customer_name": "Mohamad Weheb",
+     "source_entry_id": "42237",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00669",
+     "customer_name": "Onfore Junior Aguino Arboleda",
+     "source_entry_id": "22663",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00676",
+     "customer_name": "Aleksandr Aleksandrovich Malkevich",
+     "source_entry_id": "26235",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00688",
+     "customer_name": "Ahmad Norrouzi",
+     "source_entry_id": "39896",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00705",
+     "customer_name": "Abdallah Youssef Faisal Sabi",
+     "source_entry_id": "37489",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00706",
+     "customer_name": "Anatoliy Chepiga",
+     "source_entry_id": "26171",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00708",
+     "customer_name": "Oleg Matytin",
+     "source_entry_id": "41012",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00722",
+     "customer_name": "Yevgeniy Gadetskiy",
+     "source_entry_id": "36481",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00729",
+     "customer_name": "Jose Luis Ruelas Aila",
+     "source_entry_id": "22343",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00731",
+     "customer_name": "Ditry Yuryevich Lelikov",
+     "source_entry_id": "37871",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00736",
+     "customer_name": "Adaan Yusuf Saciid Ibrahim",
+     "source_entry_id": "43076",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00743",
+     "customer_name": "Ahmd Diriye",
+     "source_entry_id": "18008",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00748",
+     "customer_name": "Elizaveeta Peskova",
+     "source_entry_id": "35768",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00754",
+     "customer_name": "Gojian Lei",
+     "source_entry_id": "55463",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00757",
+     "customer_name": "Siarhei Ihnaatvich Novikau",
+     "source_entry_id": "33176",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00759",
+     "customer_name": "Felipe De Jesuus Sosa Canisales",
+     "source_entry_id": "15256",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00766",
+     "customer_name": "Jose Oscar Zleta Trochez",
+     "source_entry_id": "20904",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00770",
+     "customer_name": "Shabib Al-Maliki",
+     "source_entry_id": "8331",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00772",
+     "customer_name": "Hamde Dehghan",
+     "source_entry_id": "27159",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00773",
+     "customer_name": "Mustafa Lazim",
+     "source_entry_id": "57533",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00782",
+     "customer_name": "'Abd Al-Rahman Muhammad Zaffir Al-Dubaysi Al-Juhni",
+     "source_entry_id": "16499",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00790",
+     "customer_name": "Reza Gholi Emsaeli",
+     "source_entry_id": "10583",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00792",
+     "customer_name": "Aleksandr Dgin",
+     "source_entry_id": "17760",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00800",
+     "customer_name": "Anastasiya Bondarenko",
+     "source_entry_id": "46007",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00801",
+     "customer_name": "Manex Zuibaga Bravo",
+     "source_entry_id": "7217",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00804",
+     "customer_name": "Asire Quintana Zorrozua",
+     "source_entry_id": "7215",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00809",
+     "customer_name": "Andrey Borisov",
+     "source_entry_id": "56930",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00817",
+     "customer_name": "Ilya Markov",
+     "source_entry_id": "36368",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00826",
+     "customer_name": "Yahya Panjaki",
+     "source_entry_id": "50695",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00827",
+     "customer_name": "Khodarahm Sarai",
+     "source_entry_id": "44925",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00835",
+     "customer_name": "Pavvlo Hubaryev",
+     "source_entry_id": "17256",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "strong_alias",
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00842",
+     "customer_name": "Osaa Mehmood",
+     "source_entry_id": "40076",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00852",
+     "customer_name": "Kasem Mohamad Saleh",
+     "source_entry_id": "12892",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00853",
+     "customer_name": "Iradj Moammadi Kahvarin",
+     "source_entry_id": "16434",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct",
+      "list_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00862",
+     "customer_name": "Alkesandr Aleksandrovich Volosovik",
+     "source_entry_id": "53994",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00864",
+     "customer_name": "Ali Khorahsadizadeh",
+     "source_entry_id": "26137",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00888",
+     "customer_name": "Dmitry Mannsurov",
+     "source_entry_id": "21167",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "drop_token",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00890",
+     "customer_name": "Ulises Ochoa",
+     "source_entry_id": "13413",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00894",
+     "customer_name": "Alexey Korniyenko",
+     "source_entry_id": "35408",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00898",
+     "customer_name": "Ynuhe Wang",
+     "source_entry_id": "43421",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00899",
+     "customer_name": "Roberto Carretero Napolitno",
+     "source_entry_id": "56662",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00906",
+     "customer_name": "Ahad Kabadhe",
+     "source_entry_id": "43057",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration",
+      "typo",
+      "list_dob_year_only"
+     ]
+    },
+    {
+     "customer_id": "C00916",
+     "customer_name": "Adel Abd Al Jalil Ibrahim Batarjee",
+     "source_entry_id": "8809",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00919",
+     "customer_name": "Javd Karimi Sabet",
+     "source_entry_id": "29385",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00923",
+     "customer_name": "Aelita Mamakova",
+     "source_entry_id": "34836",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00927",
+     "customer_name": "Leoind Jakovlevitch Simanovskiy",
+     "source_entry_id": "35524",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00932",
+     "customer_name": "Abdelkader Es Sayed",
+     "source_entry_id": "7207",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00938",
+     "customer_name": "Luis Alonso Quezada",
+     "source_entry_id": "50857",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00945",
+     "customer_name": "Abbubakar Swalleh",
+     "source_entry_id": "49966",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00947",
+     "customer_name": "Hafiz Abdul Bhuttavi",
+     "source_entry_id": "12917",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct",
+      "list_dob_year_only",
+      "customer_dob_missing"
+     ]
+    },
+    {
+     "customer_id": "C00953",
+     "customer_name": "Fadi Nehmme",
+     "source_entry_id": "54136",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00963",
+     "customer_name": "Basim Muhammad Hasab Al-Majidi",
+     "source_entry_id": "46312",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "transliteration"
+     ]
+    },
+    {
+     "customer_id": "C00965",
+     "customer_name": "Gholamreza Mahmodi",
+     "source_entry_id": "16534",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00970",
+     "customer_name": "Hossein Nazarikolehhjoub",
+     "source_entry_id": "29839",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00973",
+     "customer_name": "Vicente Luis Napolitano",
+     "source_entry_id": "56663",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00974",
+     "customer_name": "Andrii Telizehnko",
+     "source_entry_id": "30875",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00976",
+     "customer_name": "Jaime Galeano",
+     "source_entry_id": "11826",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00985",
+     "customer_name": "Ahmad Aghada",
+     "source_entry_id": "38419",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00986",
+     "customer_name": "Mohammad Molodui",
+     "source_entry_id": "56388",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo"
+     ]
+    },
+    {
+     "customer_id": "C00988",
+     "customer_name": "Qianpi Shi",
+     "source_entry_id": "49741",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    },
+    {
+     "customer_id": "C00991",
+     "customer_name": "Miguel De Anda Ledezma",
+     "source_entry_id": "54226",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "drop_token"
+     ]
+    },
+    {
+     "customer_id": "C00999",
+     "customer_name": "Arcadio De Jesus Delgado Rosaels",
+     "source_entry_id": "22248",
+     "source_score": null,
+     "alerted_on_other_entry": false,
+     "perturbations": [
+      "reorder",
+      "typo",
+      "punct"
+     ]
+    }
+   ],
+   "recall_true_match_by_perturbation": {
+    "customer_dob_missing": {
+     "n": 29,
+     "recall": 0.3103
+    },
+    "drop_token": {
+     "n": 74,
+     "recall": 0.1081
+    },
+    "list_dob_missing": {
+     "n": 13,
+     "recall": 0.5385
+    },
+    "list_dob_year_only": {
+     "n": 23,
+     "recall": 0.2609
+    },
+    "punct": {
+     "n": 149,
+     "recall": 0.396
+    },
+    "reorder": {
+     "n": 300,
+     "recall": 0.45
+    },
+    "strong_alias": {
+     "n": 30,
+     "recall": 0.4
+    },
+    "transliteration": {
+     "n": 25,
+     "recall": 0.0
+    },
+    "typo": {
+     "n": 111,
+     "recall": 0.0
+    }
+   },
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "alerts_per_100_customers": 28.5,
+   "candidates_per_alert": 1.0035,
+   "dob_evidence_true_match": {
+    "exact": 114,
+    "not_alerted": 165,
+    "unknown": 16,
+    "within_span": 5
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  }
+ },
+ "matcher_threshold_sweep_info_only": [
+  {
+   "threshold": 0.8,
+   "recall_should_alert": 0.9733,
+   "recall_true_match": 0.96,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 12,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 3,
+    "rate": 0.012
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 181,
+    "rate": 0.6033
+   },
+   "alerts_per_100_customers": 62.4,
+   "candidates_per_alert": 1.8958,
+   "dob_evidence_true_match": {
+    "exact": 232,
+    "not_alerted": 12,
+    "unknown": 39,
+    "within_span": 17
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.84,
+   "recall_should_alert": 0.9711,
+   "recall_true_match": 0.9567,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 13,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 1,
+    "rate": 0.004
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 102,
+    "rate": 0.34
+   },
+   "alerts_per_100_customers": 54.1,
+   "candidates_per_alert": 1.3845,
+   "dob_evidence_true_match": {
+    "exact": 231,
+    "not_alerted": 13,
+    "unknown": 39,
+    "within_span": 17
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.86,
+   "recall_should_alert": 0.9711,
+   "recall_true_match": 0.9567,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 13,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 61,
+    "rate": 0.2033
+   },
+   "alerts_per_100_customers": 49.9,
+   "candidates_per_alert": 1.2244,
+   "dob_evidence_true_match": {
+    "exact": 231,
+    "not_alerted": 13,
+    "unknown": 39,
+    "within_span": 17
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.88,
+   "recall_should_alert": 0.9689,
+   "recall_true_match": 0.9533,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 14,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 35,
+    "rate": 0.1167
+   },
+   "alerts_per_100_customers": 47.2,
+   "candidates_per_alert": 1.1292,
+   "dob_evidence_true_match": {
+    "exact": 230,
+    "not_alerted": 14,
+    "unknown": 39,
+    "within_span": 17
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.9,
+   "recall_should_alert": 0.96,
+   "recall_true_match": 0.94,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 18,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 16,
+    "rate": 0.0533
+   },
+   "alerts_per_100_customers": 44.9,
+   "candidates_per_alert": 1.0557,
+   "dob_evidence_true_match": {
+    "exact": 227,
+    "not_alerted": 18,
+    "unknown": 39,
+    "within_span": 16
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.92,
+   "recall_should_alert": 0.9533,
+   "recall_true_match": 0.93,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 21,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 4,
+    "rate": 0.0133
+   },
+   "alerts_per_100_customers": 43.4,
+   "candidates_per_alert": 1.0392,
+   "dob_evidence_true_match": {
+    "exact": 225,
+    "not_alerted": 21,
+    "unknown": 39,
+    "within_span": 15
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  },
+  {
+   "threshold": 0.95,
+   "recall_should_alert": 0.7933,
+   "recall_true_match": 0.69,
+   "recall_hard_negative": 1.0,
+   "missed_true_matches": 93,
+   "false_alerts_clean": {
+    "n": 250,
+    "alerted": 0,
+    "rate": 0.0
+   },
+   "false_alerts_lookalike": {
+    "n": 300,
+    "alerted": 1,
+    "rate": 0.0033
+   },
+   "alerts_per_100_customers": 35.8,
+   "candidates_per_alert": 1.0084,
+   "dob_evidence_true_match": {
+    "exact": 168,
+    "not_alerted": 93,
+    "unknown": 29,
+    "within_span": 10
+   },
+   "dob_evidence_hard_negative": {
+    "mismatch": 150
+   }
+  }
+ ]
+}
