@@ -10,6 +10,7 @@ reviewer makes the final decision, with every step written to an audit log.
 - Offline eval: `.venv/bin/python -m evaluation.run_eval`
 - Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
   (or `--from-dir DIR` to parse files already on disk)
+- Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
 - Run: not built yet (planned: FastAPI service + Streamlit reviewer UI)
 - Live eval (costs money, only when the user authorises): not built yet
 
@@ -18,6 +19,9 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/models.py`: Pydantic domain models; docstring says who fills each field
 - `screening/ofac.py`: pure parser for OFAC SDN legacy CSVs (SDN, ALT, SDN_COMMENTS)
 - `scripts/download_ofac.py`: download + provenance manifest (sha256) + `data/ofac/entries.jsonl`
+- `screening/normalize.py`: deterministic name normalisation (shared by generator and matcher)
+- `screening/synthetic.py`: labelled synthetic customers (true_match / hard_negative / clean)
+- `scripts/generate_customers.py`: writes `data/synthetic/customers.jsonl` + manifest (seed, OFAC sha256)
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: answer key, eval scripts, committed results
 - `docs/DECISIONS.md`: ADRs
@@ -36,6 +40,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - Only public lists and synthetic customers. No real customer data, ever.
 - List data is kept as published (raw DOB text like "circa 1960"); a malformed file stops
   the load with an error; orphan rows are counted in the manifest, never silently dropped.
+- Synthetic data must not leak its label: same name styling for every kind, ids assigned
+  after shuffling. Anything a model could use as a shortcut gets a regression test.
 
 ## Conventions
 - Type hints and Pydantic models at module boundaries.

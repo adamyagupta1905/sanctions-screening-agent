@@ -37,3 +37,20 @@ Short records of choices that shape the system. Newest at the bottom.
   makes every screening result reproducible for audit; raw strings avoid inventing precision.
 - **Revisit if:** DOB matching needs structured dates/ranges (move to SDN_ADVANCED.XML), or
   OFAC retires the legacy CSVs.
+
+## ADR-004: Synthetic customers with two labels and constructed hard negatives
+- **Date:** 2026-11-23
+- **Decision:** Each customer carries `should_alert` (name close enough to review) and
+  `is_true_match` (actually the listed person). Mix: 40% true matches (real SDN individuals,
+  perturbed: reorder, punctuation, typo, dropped middle name, known transliterations, strong
+  alias), 20% hard negatives (same name, DOB >= 10 years from every list DOB, different
+  nationality), 40% clean (fixed name pool, collisions with list names rejected). Seeded.
+- **Alternatives:** Only alert/no-alert labels; LLM-generated customers; real KYC data.
+- **Why:** Banks measure two things: alert recall (missing a hit is a regulatory failure) and
+  false-positive workload. Two labels let the eval measure both, and the hard negatives are
+  exactly the cases the case note + reviewer must resolve. Rule-based generation means the
+  labels are true by construction; an LLM generator could not guarantee that.
+- **Limits:** Perturbations are simpler than real data (no script changes, e.g. Cyrillic/Arabic
+  originals). Clean names are only checked for exact token-set collisions, so a clean
+  customer could still fuzzy-resemble a listed name; the eval should report such cases.
+- **Revisit if:** Matching scores near 100% (data too easy: add harder perturbations).
