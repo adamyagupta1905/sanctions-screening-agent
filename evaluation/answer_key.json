@@ -1,0 +1,5 @@
+{
+  "version": 0,
+  "description": "Labelled screening cases. Each case: a synthetic customer, the expected sanctions entry ids that SHOULD be flagged (true matches), and tags (e.g. transliteration, alias, dob_conflict, prompt_injection). Filled in during the eval build step (/llm-eval).",
+  "cases": []
+}

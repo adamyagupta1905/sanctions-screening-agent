@@ -1,0 +1,59 @@
+"""Domain models shared across the pipeline.
+
+Who fills each field matters for model risk, so it is written down here:
+- Customer, SanctionsEntry: input data (synthetic customers, public OFAC list).
+- MatchCandidate.score: computed by deterministic Python matching, never the LLM.
+- CaseNote: written by the LLM; text only, every claim tied to an evidence id.
+- Disposition: set by a human reviewer only.
+"""
+
+from __future__ import annotations
+
+from datetime import date
+from enum import Enum
+
+from pydantic import BaseModel, Field
+
+
+class Customer(BaseModel):
+    customer_id: str
+    full_name: str
+    date_of_birth: date | None = None  # missing stays missing
+    nationality: str | None = None
+    aliases: list[str] = Field(default_factory=list)
+
+
+class SanctionsEntry(BaseModel):
+    entry_id: str  # e.g. OFAC SDN uid
+    primary_name: str
+    aliases: list[str] = Field(default_factory=list)
+    program: str | None = None
+    date_of_birth: date | None = None
+    nationality: str | None = None
+
+
+class MatchCandidate(BaseModel):
+    customer_id: str
+    entry_id: str
+    score: float = Field(ge=0.0, le=1.0)  # Python-computed similarity
+    matched_on: str  # which name/alias pair produced the score
+
+
+class EvidenceClaim(BaseModel):
+    statement: str
+    evidence_ids: list[str] = Field(min_length=1)  # no claim without a source
+
+
+class CaseNote(BaseModel):
+    """LLM output. It may recommend, but it cannot decide."""
+
+    summary: str
+    claims: list[EvidenceClaim]
+    open_questions: list[str] = Field(default_factory=list)
+    recommendation: str  # free text for the reviewer, not a disposition
+
+
+class Disposition(str, Enum):
+    PENDING = "pending"
+    CLEARED = "cleared"  # false positive, closed by a human
+    ESCALATED = "escalated"  # true/possible match, sent to compliance
