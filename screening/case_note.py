@@ -45,11 +45,38 @@ def user_prompt(rendered_context: str) -> str:
 
 
 _DECIMAL = re.compile(r"(?<![\d.])0\.\d{2,4}(?!\d)")
-_YEARS = re.compile(r"\b(\d{1,3})\s+years?\b", re.IGNORECASE)
+_YEARS = re.compile(r"\b(\d{1,3})(?:-|\s+)years?\b", re.IGNORECASE)
 _DECIDED = re.compile(
-    r"\b(case|alert|customer|match)\b.{0,30}\b(is|has been|was)\b.{0,10}\b(cleared|escalated|closed|approved)\b",
+    r"\b(case|alert|customer|match)\b.{0,30}\b(is|has been|was)\b.{0,10}(?<!pre-)\b(cleared|escalated|closed|approved)\b",
     re.IGNORECASE,
 )
+# A sentence reporting what a document or the evidence says is not the note deciding.
+_ATTRIBUTED = re.compile(r"\b(claims?|claimed|states?|stated|asserts?|asserting|according to|alleges?|purports?|"
+                         r"says|document|D\d+|note to|instructs?|instructing)\b", re.IGNORECASE)
+_LOWER_BOUND = re.compile(r"\b(exceed\w*|more than|over|at least|above|greater than)\s+(\d{1,3})\s+years?\b",
+                          re.IGNORECASE)
+_UPPER_BOUND = re.compile(r"\b(less than|under|within|below|fewer than)\s+(\d{1,3})\s+years?\b", re.IGNORECASE)
+
+
+def _sentences(text: str) -> list[str]:
+    return [x for x in re.split(r"(?<=[.!?;])\s+", text) if x.strip()]
+
+
+def _years_ok(sentence: str, gaps: set[int], evidence_years: set[int]) -> list[str]:
+    """'N years' must be a computed DOB gap, a figure quoted from the evidence, or a true
+    bound over the computed gaps ('exceeding 25 years' when every gap is above 25)."""
+    bad = []
+    bounded = {}
+    for m in _LOWER_BOUND.finditer(sentence):
+        bounded[int(m.group(2))] = bool(gaps) and min(gaps) > int(m.group(2))
+    for m in _UPPER_BOUND.finditer(sentence):
+        bounded[int(m.group(2))] = bool(gaps) and max(gaps) < int(m.group(2))
+    for raw in _YEARS.findall(sentence):
+        n = int(raw)
+        if n in gaps or n in evidence_years or bounded.get(n):
+            continue
+        bad.append(f"'{raw} years' does not match any computed DOB gap or figure in the evidence.")
+    return bad
 
 
 def check_case_note(note: CaseNote, context: CaseContext) -> list[str]:
@@ -69,11 +96,11 @@ def check_case_note(note: CaseNote, context: CaseContext) -> list[str]:
         if round(float(raw), 4) not in scores:
             problems.append(f"Number {raw} does not match any computed score or the threshold.")
     gaps = {c.dob_years_apart for c in context.candidates if c.dob_years_apart is not None}
-    for raw in _YEARS.findall(text):
-        if int(raw) not in gaps:
-            problems.append(f"'{raw} years' does not match any computed DOB gap.")
+    evidence_years = {int(n) for t in context.texts for n in _YEARS.findall(t.text)}
+    for sentence in _sentences(text):
+        problems.extend(_years_ok(sentence, gaps, evidence_years))
 
-    if _DECIDED.search(text):
+    if any(_DECIDED.search(x) and not _ATTRIBUTED.search(x) for x in _sentences(text)):
         problems.append("The note states an outcome as decided; only the analyst decides.")
     if not note.claims:
         problems.append("The note has no cited claims.")

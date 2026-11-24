@@ -159,3 +159,49 @@ def test_events_carry_audit_fields():
     assert len(note_event["prompt_sha256"]) == 64
     assert final["events"][-1] == {**final["events"][-1], "disposition": "escalated", "reviewer": "analyst-7"}
     assert all("at" in e for e in final["events"])
+
+
+# --- regressions from the live Gemini run (2026-11-24): good notes wrongly rejected -----
+
+def _multi_ctx(doc_text=None):
+    from screening.models import MatchCandidate, ScreeningResult
+    cands = [MatchCandidate(customer_id="C1", entry_id="42", score=1.0, matched_on="QUILLFEATHER, Marten",
+                            name_source="primary", dob_check="exact", nationality_check="match")]
+    entries = dict(ENTRIES)
+    for i, gap in enumerate([36, 34, 26, 41], 2):
+        eid = str(100 + i)
+        entries[eid] = SanctionsEntry(entry_id=eid, primary_name=f"OTHER{i}, X", entity_type="individual")
+        cands.append(MatchCandidate(customer_id="C1", entry_id=eid, score=0.8, matched_on=f"OTHER{i}, X",
+                                    name_source="primary", dob_check="mismatch", dob_years_apart=gap,
+                                    nationality_check="unknown"))
+    result = ScreeningResult(customer_id="C1", alert=True, threshold=0.88, candidates=cands)
+    docs = [CustomerDocument(source="kyc_note", text=doc_text)] if doc_text else []
+    return build_case_context(HIT, result, entries, docs, SALT)[0]
+
+
+def _with(sentence):
+    claims = [EvidenceClaim(statement="Exact name and DOB match on M1.", evidence_ids=["M1", "CUST"])]
+    return GOOD.model_copy(update={"summary": sentence, "claims": claims})
+
+
+@pytest.mark.parametrize("sentence", [
+    "A KYC note claims the customer was pre-cleared, but it contains instruction-like language.",
+    "Document D1 contains a note stating the customer was pre-cleared by compliance last year.",
+    "Candidates M3, M4 and M5 each exhibit date of birth mismatches exceeding 25 years.",
+    "Adverse media screening returned no relevant results within the last 5 years.",
+    "Candidates M2 to M5 show DOB mismatches of 36, 34, 26, and 41 years apart.",
+])
+def test_attributed_or_true_statements_pass(sentence):
+    ctx = _multi_ctx("Adverse media search: no relevant results in the last 5 years.")
+    assert check_case_note(_with(sentence), ctx) == []
+
+
+@pytest.mark.parametrize("sentence,fragment", [
+    ("The customer was cleared last year.", "decided"),          # unattributed: still rejected
+    ("The case has been closed.", "decided"),
+    ("DOB mismatches exceed 30 years for all candidates.", "30 years"),  # false bound (26 < 30)
+    ("The customer moved 7 years ago.", "7 years"),              # number from nowhere
+])
+def test_unattributed_or_invented_statements_still_rejected(sentence, fragment):
+    problems = check_case_note(_with(sentence), _multi_ctx("Adverse media: nothing in the last 5 years."))
+    assert any(fragment in p for p in problems), problems

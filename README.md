@@ -23,7 +23,15 @@ Name screening on a held-out set of 1,000 synthetic customers against the real O
 | False alerts, clean names (250) | 0 | 0 |
 | Hard negatives with DOB mismatch shown to reviewer | 150/150 | 150/150 |
 
-Not built yet: LLM case notes (citation validity, faithfulness) and prompt-injection tests.
+LLM case notes on 38 alerts (live, `gemini-3.8-flash`, about $0.18), against a no-LLM template note:
+
+| Metric | Template note | Gemini |
+|---|---|---|
+| Harmful notes (contradicts a fact, advises clearing a true match, follows an injection) | 0/38 | **0/38** |
+| Injected documents recognised (incl. paraphrased, obfuscated) | 7/14 | **14/14** |
+| Notes passing the workflow's Python checks first time | 38/38 | 38/38 |
+
+Both evals also found bugs in my own checks; they are listed in the write-up.
 
 ## Quick start
 
@@ -35,4 +43,4 @@ cp .env.example .env                   # only needed for live runs; never commit
 
 ## Status
 
-Ingestion, synthetic data, matching and its evaluation are built; the LLM agent is next. See [PROGRESS.md](PROGRESS.md) for the build plan and [docs/DECISIONS.md](docs/DECISIONS.md) for design decisions.
+Ingestion, matching, the LangGraph workflow with LLM case notes, the audit log and both evaluations are built. See [PROGRESS.md](PROGRESS.md) for the build plan and [docs/DECISIONS.md](docs/DECISIONS.md) for design decisions.

@@ -68,9 +68,14 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       be blocked in a future version). Allow-list in `screening/workflow.py`; passes with
       LANGGRAPH_STRICT_MSGPACK=true; regression test.
 
+- [x] Full Gemini note run (2026-11-24, user-approved): 38 cases, 40 calls, ~$0.18.
+      Re-scored: 0 harmful, 38/38 DOB correct, 14/14 injections recognised (template 7/14),
+      1 hedged false flag on a benign doc. Reading the notes found 2 over-strict workflow
+      checks (dropped 2 good notes) and 3 scorer bugs; all fixed with two-way regression tests.
+
 ## In progress
-- [ ] Full Gemini note run: 38 cases, 38-76 calls. From pilot usage (~960 in / ~930 out
-      tokens per call): about $0.16-0.32. Needs the user's OK.
+- [ ] Nothing. The scoring rules were fixed after reading Gemini's notes: a Claude run would be
+      the out-of-sample test (needs Anthropic credentials + OK; estimate 38-76 calls, $2-5).
 - [x] `ClaudeLLM` now logs token usage per call; runner reports totals. Fixed: a failed live
       run wrote an empty cassette that would have broken replay; regression test.
 
@@ -112,7 +117,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 5. ~~PII redaction + injection guard~~ done (LLM-side injection eval comes with step 8).
 6. ~~LangGraph workflow~~ done (offline; no live model call yet).
 7. ~~Audit log~~ done.
-8. Case-note eval: harness done offline; live run pending the user's OK.
+8. ~~Case-note eval~~ done on Gemini (docs/EVALUATION.md). Claude run optional.
 9. MCP server exposing screening tools; FastAPI service; Streamlit reviewer UI.
 10. Tracing/observability, model card (intended use, limits, eval results), README results table.
 
@@ -134,7 +139,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 154 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 169 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Injection checks: deterministic, `evaluation/results/injection_checks_v1_2026-11-24.json`.
 - Evals: matching eval run 2026-11-24 on key v1 (deterministic, no model); results in
   `evaluation/results/matching_key-v1_2026-11-24.json`. LLM evals: not built.

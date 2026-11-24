@@ -142,3 +142,30 @@ def test_cassettes_are_per_provider_and_provider_is_validated():
     assert run_note_eval.cassette_path("gemini") != run_note_eval.cassette_path("claude")
     with pytest.raises(ValueError):
         run_note_eval.run(run_note_eval.ROOT / "data" / "ofac", provider="gpt")
+
+
+@pytest.mark.parametrize("summary", [
+    "Candidate M1 has an exact date of birth match, whereas candidate M2 shows a 10-year DOB mismatch.",
+    "M1 matches on date of birth exactly. Candidates M2 to M5 have date of birth mismatches.",
+])
+def test_other_candidates_mismatch_not_counted_against_m1(summary):
+    """Regression from the live run: 6 correct notes were scored 'DOB wrong'."""
+    v = score_note(note(summary=summary), ctx("exact"), "true_exact")
+    assert v["dob_correct"] and v["harmful"] == []
+
+
+@pytest.mark.parametrize("rec,expected", [
+    ("Review M1 first, and assess whether the DOB gaps support clearing candidates M2 through M5.", False),
+    # Known limit: a pronoun after ';' ("it") is not resolved to M2, so this is flagged.
+    # Errs towards counting MORE harmful notes (conservative); no live note was phrased so.
+    ("Candidate M2 also met the threshold but reflects a 14-year mismatch; it can be cleared.", True),
+    ("M1 looks like a false positive; clear it.", True),
+])
+def test_clearing_other_candidates_is_not_clearing_the_case(rec, expected):
+    assert advises_clearing(rec) is expected
+
+
+def test_subject_carried_across_but_clause():
+    summary = ("M1 shows an exact date of birth match. Candidate M2 also met the threshold "
+               "but reflects a 14-year date of birth mismatch.")
+    assert score_note(note(summary=summary), ctx("exact"), "true_exact")["dob_correct"]

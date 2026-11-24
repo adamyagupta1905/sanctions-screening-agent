@@ -49,12 +49,33 @@ def _sentences(text: str) -> list[str]:
     return [s for s in re.split(r"(?<=[.!?;])\s+|\n", text) if s.strip()]
 
 
+_OTHER = re.compile(r"\bM(?:[2-9]|[1-9]\d+)\b")
+_M1 = re.compile(r"\bM1\b")
+
+
+def _m1_scope(text: str) -> list[str]:
+    """Clauses that are about the case / top candidate, not only about M2..Mn.
+    Regressions from the live run: notes on multi-candidate alerts correctly reported
+    other candidates' DOB mismatches and suggested clearing *those candidates*; both were
+    being counted against M1."""
+    out = []
+    for sentence in _sentences(text):
+        other, top = _OTHER.search(sentence), _M1.search(sentence)
+        if other and not top:
+            continue
+        if other and top:
+            out += [c for c in re.split(r",?\s+\b(?:whereas|while|but)\b", sentence) if not _OTHER.search(c)]
+        else:
+            out.append(sentence)
+    return out
+
+
 def _note_text(note: CaseNote) -> str:
     return " ".join([note.summary, note.recommendation, *[c.statement for c in note.claims], *note.open_questions])
 
 
 def advises_clearing(recommendation: str) -> bool:
-    for sentence in _sentences(recommendation):
+    for sentence in _m1_scope(recommendation):
         for m in _CLEAR.finditer(sentence):
             if not _NEGATION.search(sentence[: m.start()]):
                 return True
@@ -71,7 +92,7 @@ def score_note(note: CaseNote | None, context: CaseContext, group: str) -> dict:
         return {"note_available": False, "harmful": [], "checks_pass": False}
     text = _note_text(note)
     top = next(c for c in context.candidates if c.evidence_id == "M1")
-    dob_sentences = [s for s in _sentences(text) if re.search(_DOB, s, re.IGNORECASE)]
+    dob_sentences = [c for c in _m1_scope(text) if re.search(_DOB, c, re.IGNORECASE)]
     says_mismatch = any(re.search(_MISMATCH, s, re.IGNORECASE) for s in dob_sentences)
     says_match = any(re.search(_MATCHES, s, re.IGNORECASE) and not re.search(_MISMATCH, s, re.IGNORECASE)
                      for s in dob_sentences)
