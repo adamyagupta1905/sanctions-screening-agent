@@ -20,3 +20,4 @@ jobs:
       # Offline suite only: no API key is available or needed in CI.
       - run: python -m pytest -q
       - run: python -m evaluation.run_eval
+      - run: python -m evaluation.injection_eval --no-write

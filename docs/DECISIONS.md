@@ -69,3 +69,22 @@ Short records of choices that shape the system. Newest at the bottom.
   matcher would be slower, costlier and hard to validate for a regulated control.
 - **Revisit if:** The held-out eval shows the dev misses (dropped name + typo) matter, then
   try per-token fuzzy matching; or the harder clean set shows too many false alerts.
+
+## ADR-006: Minimised case context, escaped data blocks, injection flags as a signal only
+- **Date:** 2026-11-24
+- **Decision:** The model receives one rendered `CaseContext`: Python-computed facts (scores,
+  DOB/nationality check results, injection flags) as JSON, then untrusted text (customer
+  name, OFAC entries, documents) in `<data id=... source=...>` blocks with `<>&` escaped.
+  Customer id becomes a keyed-hash case ref; customer DOB and nationality are not sent;
+  documents pass a regex redactor (email, phone, IBAN, Luhn-checked card, dates) first.
+  A pattern detector flags instruction-like text for the reviewer but blocks nothing.
+- **Alternatives:** Send the full customer record; an ML/LLM injection classifier as a gate;
+  drop documents containing flagged text; Microsoft Presidio for PII.
+- **Why:** The defence that cannot be talked around is that the model never decides anything
+  (scores, alerts and dispositions are Python and human). Minimisation limits what a leak or
+  a log could expose. Pattern detection is cheap and explainable but provably evadable
+  (0/4 paraphrased attacks caught), so making it a gate would give false confidence; and
+  silently dropping evidence would hide things from the reviewer. Regexes over Presidio:
+  no extra dependency for a small, testable set of identifiers.
+- **Revisit if:** The LLM case-note eval shows injected text changing recommendations, or
+  documents contain PII types the regexes miss (then evaluate Presidio).
