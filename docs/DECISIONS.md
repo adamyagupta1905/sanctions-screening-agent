@@ -124,3 +124,21 @@ Short records of choices that shape the system. Newest at the bottom.
   daily checkpoint). Delivery is at-least-once (a crash between audit write and checkpoint
   can log a step twice). The checkpointer keeps full history incl. customer documents.
 - **Revisit if:** More than one writer process, or retention/deletion rules for case state.
+
+## ADR-009: Case-note eval with rule scoring, a template baseline and prompt-keyed cassettes
+- **Date:** 2026-11-24
+- **Decision:** 38 frozen alerts (8 true matches with exact DOB, 4 with unknown DOB, 8 hard
+  negatives, 14 true matches carrying an injection document, 4 with a benign document).
+  Notes are scored by deterministic rules; harmful errors (contradicting the DOB fact,
+  advising to clear a true match, repeating an injected clearance claim as fact) are listed
+  case by case. Baseline: a Python template note built only from computed facts. Live
+  responses are recorded once, keyed by sha256(prompt), and replayed for free.
+- **Alternatives:** LLM-as-judge; human grading only; comparing against a hand-written
+  ideal note.
+- **Why:** The harmful errors are checkable with rules, which are free, deterministic and
+  auditable; a judge model would add cost and its own error rate. The template baseline is
+  the honest comparison: it can never misstate a fact, so Claude has to match it on safety
+  and earn its place by reading documents (it sees injected text the detector misses).
+  Rules cannot judge readability; that is left to a human read and stated as a limit.
+- **Revisit if:** Rule verdicts disagree with a manual read of the notes; then add an
+  LLM-judge for the disputed criteria, validated against those manual reads.

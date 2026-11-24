@@ -59,3 +59,12 @@ def test_only_llm_module_imports_the_sdk():
             if any(n.split(".")[0] == "anthropic" for n in names):
                 offenders.append(str(path.relative_to(root)))
     assert offenders == []
+
+
+def test_usage_recorded_per_call():
+    from types import SimpleNamespace
+    client = FakeAnthropicClient(parsed_output=NOTE)
+    client._response.usage = SimpleNamespace(input_tokens=1200, output_tokens=800)
+    llm = ClaudeLLM(client=client)
+    llm.extract(system="s", user="u", schema=CaseNote)
+    assert llm.usage == [{"input_tokens": 1200, "output_tokens": 800}]

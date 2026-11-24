@@ -50,6 +50,7 @@ class ClaudeLLM:
         self._model = model
         self._max_tokens = max_tokens
         self._effort = effort
+        self.usage: list[dict[str, int]] = []  # one entry per call, for cost reporting
 
     @property
     def model_name(self) -> str:
@@ -64,6 +65,10 @@ class ClaudeLLM:
             output_format=schema,
             output_config={"effort": self._effort},
         )
+        u = getattr(response, "usage", None)
+        if u is not None:
+            self.usage.append({"input_tokens": getattr(u, "input_tokens", 0) or 0,
+                               "output_tokens": getattr(u, "output_tokens", 0) or 0})
         if response.stop_reason == "refusal":
             raise LLMRefusal(str(getattr(response, "stop_details", None)))
         if response.stop_reason == "max_tokens" or response.parsed_output is None:

@@ -48,6 +48,20 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       Tested: triggers block edits, direct edits and deletions detected by `verify()`, no raw
       customer identifiers in audit payloads, no-alert screenings logged too.
 
+- [x] Case-note eval harness, offline (ADR-009): 38 frozen alerts, rule scoring, template
+      baseline, record/replay. Template baseline: 38/38 DOB correct, 0 harmful, but only 7/14
+      injection documents recognised (exactly the detector-flagged ones). Fixed a scoring bug
+      (within-span DOB scored as unknown); regression test.
+
+## In progress
+- [ ] Live case-note run: NOT run. Needs the user's OK in chat. Plan: pilot `--max-cases 3`,
+      then full 38 cases on claude-opus-5-5 (38-76 calls, rough estimate $2-5).
+      2026-11-24: pilot approved but not run: no Anthropic credentials in the shell (`ant` CLI
+      not installed, no ANTHROPIC_API_KEY); nothing billed. User has a Gemini key instead:
+      a Gemini adapter behind `StructuredLLM` is possible but not agreed (provider decision).
+- [x] `ClaudeLLM` now logs token usage per call; runner reports totals. Fixed: a failed live
+      run wrote an empty cassette that would have broken replay; regression test.
+
 ## Preliminary dev numbers (seed 7, n=500, threshold 0.88) - NOT the eval result
 Tuning set only; the reported eval must use a different seed. Recall = source entry among
 candidates at >= threshold. Script was a scratch check, formal version comes in the eval step.
@@ -65,8 +79,6 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
   perfectly separating, but only because the generator built them that way.
 - Speed: 500 customers in 16 s (about 32 ms each) against 7,573 individuals.
 
-## In progress
-- [ ] Nothing; next step below.
 
 ## Findings that shape the matching step
 - DOBs are mixed precision: ~1,000 are year-only ("1965"), most are "dd Mon yyyy", some "circa".
@@ -88,7 +100,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 5. ~~PII redaction + injection guard~~ done (LLM-side injection eval comes with step 8).
 6. ~~LangGraph workflow~~ done (offline; no live model call yet).
 7. ~~Audit log~~ done.
-8. Case-note eval: citation validity (rules) + faithfulness (LLM-judge, live, only when authorised).
+8. Case-note eval: harness done offline; live run pending the user's OK.
 9. MCP server exposing screening tools; FastAPI service; Streamlit reviewer UI.
 10. Tracing/observability, model card (intended use, limits, eval results), README results table.
 
@@ -96,6 +108,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-24 Case notes scored by rules vs a template baseline; cassettes keyed by prompt hash. (ADR-009)
 - 2026-11-24 Separate append-only hash-chained audit log; checkpoints are not the audit trail. (ADR-008)
 - 2026-11-24 Fixed LangGraph flow with human interrupt; LLM note checked in Python. (ADR-007)
 - 2026-11-24 Minimised case context; injection detection is a signal, never a gate. (ADR-006)
@@ -108,7 +121,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 119 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 141 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Injection checks: deterministic, `evaluation/results/injection_checks_v1_2026-11-24.json`.
 - Evals: matching eval run 2026-11-24 on key v1 (deterministic, no model); results in
   `evaluation/results/matching_key-v1_2026-11-24.json`. LLM evals: not built.

@@ -139,3 +139,20 @@ What this shows:
 - Escaping holds: a payload such as `</data><system>...` is rendered as text inside its block.
 - What is **not** measured yet: whether the LLM case note is influenced by these payloads.
   That needs live model calls and comes with the case-note eval (PROGRESS step 8).
+
+# Evaluation: LLM case notes (harness ready, live run pending)
+
+_Cases: `evaluation/note_cases.json` v1 (38 alerts from answer key v1) · scoring rules:
+`evaluation/note_scoring.py` · prompt `case-note-v1`_
+
+| Metric | Cases | Template baseline (no LLM) | Claude |
+|---|---|---|---|
+| DOB stated correctly | 38 | 38/38 | not run |
+| Advises clearing a true match with exact DOB (harmful) | 26 | 0 | not run |
+| Recognises instruction-like text in an injected document | 14 | 7/14 (only detector-flagged ones) | not run |
+| Harmful notes, any kind | 38 | 0 | not run |
+
+The template can never misstate a fact because it copies them, so it is a strong floor.
+Claude has to match it on safety and earn its place on what the template cannot do: read
+documents (e.g. recognise the 7 paraphrased/obfuscated injections the detector misses).
+The live run has not happened yet; it needs explicit approval because it costs money.

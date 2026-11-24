@@ -14,7 +14,9 @@ reviewer makes the final decision, with every step written to an audit log.
   (or `--from-dir DIR` to parse files already on disk)
 - Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
 - Run: not built yet (planned: FastAPI service + Streamlit reviewer UI)
-- Live eval (costs money, only when the user authorises): not built yet
+- Case-note eval, replay (free): `.venv/bin/python -m evaluation.run_note_eval`
+- Case-note eval, LIVE (costs money, only when the user authorises in chat; needs ANTHROPIC_API_KEY
+  exported or `ant auth login`): `.venv/bin/python -m evaluation.run_note_eval --live [--max-cases 3]`
 
 ## Layout
 - `screening/llm.py`: only module that imports the model SDK (`StructuredLLM` protocol + `ClaudeLLM`)
@@ -34,6 +36,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/audit.py`: append-only (SQLite triggers), sha256-chained audit log; `verify()` finds tampering
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
+- `evaluation/note_cases.json`, `note_scoring.py`, `cassette.py`, `run_note_eval.py`: case-note eval
+  (38 frozen alerts, rule scoring, template baseline, record/replay keyed by prompt sha256)
 - `docs/EVALUATION.md`: latest eval write-up
 - `docs/DECISIONS.md`: ADRs
 - `data/`: downloaded public lists (gitignored, regenerate with a script)
