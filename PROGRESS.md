@@ -30,12 +30,15 @@ the service/UI layer, an optional second-model run, and portfolio polish.
       tool; new audited `POST /lookup`. Tested through the MCP layer and over real stdio against the
       running demo (listed person found with exact DOB, clean name no alert, chain intact).
 
+- [x] Model card (`docs/MODEL_CARD.md`) incl. false alerts by nationality (Russia 14/86 = 16%,
+      Iran 1/36, Mexico 1/31, clean 0/250); `tests/test_model_card.py` ties every number to the
+      results files (it caught a stale speed figure on first run).
+
 ## In progress
 - Nothing.
 
 ## Next up (each startable on its own)
-1. **Model card** (`docs/MODEL_CARD.md`): intended use, data, both eval results, limits.
-   Then run `/portfolio-release`.
+1. Run `/portfolio-release` (README results, demo mode, secrets, CI) before sharing.
 2. Optional: **Claude note run** as the out-of-sample test of the scoring rules (they were
    corrected after reading Gemini's notes). Needs Anthropic credentials + the user's OK;
    estimate 38-76 calls, $2-5. Decide on refusal fallbacks (beta) at that point.
@@ -60,7 +63,7 @@ the service/UI layer, an optional second-model run, and portfolio polish.
   (ADR-004). OFAC legacy CSV + manifest (ADR-003). One Pydantic schema end to end (ADR-002).
 
 ## Verification status (2026-11-24)
-- Tests: 185 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
+- Tests: 188 passing, `.venv/bin/python -m pytest -q` (offline, ~2 s).
 - Matching eval: reproduces 95.3% / 45.0% recall (`python -m evaluation.run_eval --no-write`).
 - Injection checks: containment 24/24 (`python -m evaluation.injection_eval --no-write`).
 - Note eval replay: 0 harmful, 14/14 injections, no API call

@@ -9,6 +9,7 @@ reviewer makes the final decision, with every step written to an audit log.
 - Tests (offline, no key, seconds): `.venv/bin/python -m pytest -q`
 - Offline eval (deterministic, free; needs OFAC data): `.venv/bin/python -m evaluation.run_eval`
 - Injection/containment checks (deterministic, free): `.venv/bin/python -m evaluation.injection_eval`
+- False alerts by nationality (free): `.venv/bin/python -m evaluation.false_alerts_by_group`
 - Rebuild answer key (only with a new OFAC snapshot; bump KEY_VERSION): `.venv/bin/python -m evaluation.build_answer_key`
 - Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
   (or `--from-dir DIR` to parse files already on disk)
@@ -48,7 +49,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
 - `evaluation/note_cases.json`, `note_scoring.py`, `cassette.py`, `run_note_eval.py`: case-note eval
   (38 frozen alerts, rule scoring, template baseline, record/replay keyed by prompt sha256)
-- `docs/EVALUATION.md`: latest eval write-up
+- `docs/EVALUATION.md`: latest eval write-up; `docs/MODEL_CARD.md`: numbers tested against results
+  files by `tests/test_model_card.py` (update both together)
 - `docs/DECISIONS.md`: ADRs
 - `data/`: downloaded public lists (gitignored, regenerate with a script)
 

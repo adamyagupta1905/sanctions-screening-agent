@@ -1,0 +1,421 @@
+{
+ "answer_key_version": 1,
+ "threshold": 0.88,
+ "min_n_to_interpret": 15,
+ "lookalike_total": {
+  "n": 300,
+  "false_alerts": 35
+ },
+ "clean_total": {
+  "n": 250,
+  "false_alerts": 0
+ },
+ "by_nationality": [
+  {
+   "nationality": "Russia",
+   "n": 86,
+   "false_alerts": 14,
+   "rate": 0.1628,
+   "interpretable": true
+  },
+  {
+   "nationality": "Iran",
+   "n": 36,
+   "false_alerts": 1,
+   "rate": 0.0278,
+   "interpretable": true
+  },
+  {
+   "nationality": "Mexico",
+   "n": 31,
+   "false_alerts": 1,
+   "rate": 0.0323,
+   "interpretable": true
+  },
+  {
+   "nationality": "China",
+   "n": 11,
+   "false_alerts": 2,
+   "rate": 0.1818,
+   "interpretable": false
+  },
+  {
+   "nationality": "Belarus",
+   "n": 8,
+   "false_alerts": 2,
+   "rate": 0.25,
+   "interpretable": false
+  },
+  {
+   "nationality": "Iraq",
+   "n": 7,
+   "false_alerts": 5,
+   "rate": 0.7143,
+   "interpretable": false
+  },
+  {
+   "nationality": "Colombia",
+   "n": 6,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Lebanon",
+   "n": 6,
+   "false_alerts": 1,
+   "rate": 0.1667,
+   "interpretable": false
+  },
+  {
+   "nationality": "Syria",
+   "n": 5,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "India",
+   "n": 5,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Afghanistan",
+   "n": 5,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Ukraine",
+   "n": 5,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "South Sudan",
+   "n": 4,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Nicaragua",
+   "n": 4,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Indonesia",
+   "n": 4,
+   "false_alerts": 1,
+   "rate": 0.25,
+   "interpretable": false
+  },
+  {
+   "nationality": "Guatemala",
+   "n": 4,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Yemen",
+   "n": 4,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Venezuela",
+   "n": 4,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Korea, North",
+   "n": 3,
+   "false_alerts": 2,
+   "rate": 0.6667,
+   "interpretable": false
+  },
+  {
+   "nationality": "Serbia",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Dominican Republic",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "South Africa",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Palestinian",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Cuba",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Saudi Arabia",
+   "n": 3,
+   "false_alerts": 1,
+   "rate": 0.3333,
+   "interpretable": false
+  },
+  {
+   "nationality": "Turkey",
+   "n": 3,
+   "false_alerts": 1,
+   "rate": 0.3333,
+   "interpretable": false
+  },
+  {
+   "nationality": "Burma",
+   "n": 3,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Uzbekistan",
+   "n": 2,
+   "false_alerts": 1,
+   "rate": 0.5,
+   "interpretable": false
+  },
+  {
+   "nationality": "Tunisia",
+   "n": 2,
+   "false_alerts": 1,
+   "rate": 0.5,
+   "interpretable": false
+  },
+  {
+   "nationality": "Somalia",
+   "n": 2,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Maldives",
+   "n": 2,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Haiti",
+   "n": 2,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Philippines",
+   "n": 2,
+   "false_alerts": 1,
+   "rate": 0.5,
+   "interpretable": false
+  },
+  {
+   "nationality": "Uganda",
+   "n": 2,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Georgia",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Central African Republic",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Malaysia",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Rwanda",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Bulgaria",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Albania",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Kosovo",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Germany",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Zimbabwe",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Israel",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Taiwan",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Ecuador",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Canada",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Ireland",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "El Salvador",
+   "n": 1,
+   "false_alerts": 1,
+   "rate": 1.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Guinea-Bissau",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "United Kingdom",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Mali",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Sweden",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Nigeria",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Panama",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Slovakia",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Switzerland",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  },
+  {
+   "nationality": "Montenegro",
+   "n": 1,
+   "false_alerts": 0,
+   "rate": 0.0,
+   "interpretable": false
+  }
+ ]
+}

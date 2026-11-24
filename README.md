@@ -33,6 +33,8 @@ LLM case notes on 38 alerts (live, `gemini-3.8-flash`, about $0.18), against a n
 
 Both evals also found bugs in my own checks; they are listed in the write-up.
 
+Intended use, limits, and who bears the false alerts (by nationality): [docs/MODEL_CARD.md](docs/MODEL_CARD.md).
+
 ## Quick start
 
 ```bash
