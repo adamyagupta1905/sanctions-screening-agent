@@ -39,10 +39,24 @@ class SanctionsEntry(BaseModel):
 
 
 class MatchCandidate(BaseModel):
+    """One possible hit. Every field is computed by deterministic Python (screening/matching.py)."""
+
     customer_id: str
     entry_id: str
-    score: float = Field(ge=0.0, le=1.0)  # Python-computed similarity
-    matched_on: str  # which name/alias pair produced the score
+    score: float = Field(ge=0.0, le=1.0)  # name similarity; DOB does not change it
+    matched_on: str  # the list name (primary or alias) that produced the score
+    name_source: str  # "primary" | "alias" | "weak_alias"
+    dob_check: str  # "exact" | "within_span" | "mismatch" | "unknown"
+    dob_years_apart: int | None = None  # set when dob_check == "mismatch"
+    nationality_check: str  # "match" | "mismatch" | "unknown"
+    unparsed_list_dobs: list[str] = Field(default_factory=list)  # shown, never guessed
+
+
+class ScreeningResult(BaseModel):
+    customer_id: str
+    alert: bool  # any candidate at or above the alert threshold
+    threshold: float
+    candidates: list[MatchCandidate]  # best first
 
 
 class EvidenceClaim(BaseModel):

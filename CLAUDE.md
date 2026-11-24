@@ -20,6 +20,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/ofac.py`: pure parser for OFAC SDN legacy CSVs (SDN, ALT, SDN_COMMENTS)
 - `scripts/download_ofac.py`: download + provenance manifest (sha256) + `data/ofac/entries.jsonl`
 - `screening/normalize.py`: deterministic name normalisation (shared by generator and matcher)
+- `screening/dob.py`: DOB comparison at the precision OFAC gives (exact / within span / mismatch / unknown)
+- `screening/matching.py`: `Matcher` (fuzzy, deterministic) and `ExactBaseline`
 - `screening/synthetic.py`: labelled synthetic customers (true_match / hard_negative / clean)
 - `scripts/generate_customers.py`: writes `data/synthetic/customers.jsonl` + manifest (seed, OFAC sha256)
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
@@ -40,6 +42,9 @@ reviewer makes the final decision, with every step written to an audit log.
 - Only public lists and synthetic customers. No real customer data, ever.
 - List data is kept as published (raw DOB text like "circa 1960"); a malformed file stops
   the load with an error; orphan rows are counted in the manifest, never silently dropped.
+- Alerts are name-only; DOB/nationality are evidence for the reviewer, never used to suppress
+  an alert. The matcher must not reuse the generator's transliteration table (circular eval).
+- Tune thresholds on the dev seed only; report results on a held-out seed.
 - Synthetic data must not leak its label: same name styling for every kind, ids assigned
   after shuffling. Anything a model could use as a shortcut gets a regression test.
 

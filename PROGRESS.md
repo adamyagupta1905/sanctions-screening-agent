@@ -25,6 +25,26 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       strong_alias 15, list DOB year-only 19, list DOB missing 10, customer DOB missing 21.
 - [x] Fixed: label leak via letter case (list-derived names kept OFAC UPPERCASE surnames);
       all names now share one style, regression test added.
+- [x] Matching module (`screening/matching.py`, `screening/dob.py`, ADR-005): fuzzy `Matcher`
+      + `ExactBaseline`. Found and fixed a prefilter bug that could silently drop candidates
+      (token_set is not always >= token_sort); regression test added.
+
+## Preliminary dev numbers (seed 7, n=500, threshold 0.88) - NOT the eval result
+Tuning set only; the reported eval must use a different seed. Recall = source entry among
+candidates at >= threshold. Script was a scratch check, formal version comes in the eval step.
+| | Matcher | Exact baseline |
+|---|---|---|
+| Recall, all should_alert (300) | 0.963 | 0.653 |
+| Recall, true matches (200) | 0.94 | 0.48 |
+| Recall, typo (70) | 0.86 | 0.01 |
+| Recall, dropped name (44) | 0.75 | 0.00 |
+| Recall, transliteration (17) | 0.88 | 0.00 |
+| Alerts on clean customers (200) | 0 | 0 |
+- All 11 misses combine a dropped name with a typo or transliteration (2 words vs 3 lose
+  too much). Per-token fuzzy matching is the likely fix; do not tune on this set.
+- Hard negatives: all 100 alerted, and all 100 show `dob_check=mismatch`. DOB evidence is
+  perfectly separating, but only because the generator built them that way.
+- Speed: 500 customers in 16 s (about 32 ms each) against 7,573 individuals.
 
 ## In progress
 - [ ] Nothing; next step below.
@@ -36,13 +56,16 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
 - Entity types differ: customer screening should match individuals vs. individuals first.
 - Strong aliases can be a completely different name (e.g. a nom de guerre): token similarity
   to the primary name will miss them, so the matcher must score every alias separately.
+- Clean customers are too easy: names come from a pool unlike most list names, so "0 false
+  alerts" says little. Add a harder clean set (common names from the same regions as the
+  list, checked not to be listed) before claiming a false-positive rate.
 - Transliteration is rare in the generated set (17/200): if recall on that tag matters,
   generate a larger set or oversample entries whose names hit the variant table.
 
 ## Next up (v1 checklist)
 1. ~~Data download + parse~~ done.
 2. ~~Synthetic customers generator~~ done.
-3. Deterministic matching (`screening/matching.py`): normalisation + fuzzy scoring + DOB/nationality checks; exact-match baseline.
+3. ~~Deterministic matching~~ done (dev numbers above).
 4. Answer key + eval (`/llm-eval`): precision/recall of matching vs. baseline, committed results.
 5. PII redaction + prompt-injection guard for untrusted text; injection cases in the answer key.
 6. LangGraph workflow: screen -> gather evidence -> draft CaseNote -> human interrupt -> record disposition.
@@ -55,6 +78,7 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-23 Name-only alerts, blended fuzzy score, DOB/nationality as evidence. (ADR-005)
 - 2026-11-23 Two labels per customer (should_alert, is_true_match); rule-built hard negatives. (ADR-004)
 - 2026-11-23 OFAC via legacy CSV + provenance manifest; DOBs kept as raw text. (ADR-003)
 - 2026-11-23 Structured output via `messages.parse` + Pydantic. **Why:** one schema end to end. (ADR-002)
@@ -62,7 +86,7 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 38 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 60 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Evals: not built (answer key has 0 cases)
 - Not verified: `ClaudeLLM` has never made a live API call (tested only with a fake client).
 - Verified live: OFAC URLs and layout (2026-11-24). `--from-dir` run manually, no unit test.

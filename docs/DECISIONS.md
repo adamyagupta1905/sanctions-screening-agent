@@ -54,3 +54,18 @@ Short records of choices that shape the system. Newest at the bottom.
   originals). Clean names are only checked for exact token-set collisions, so a clean
   customer could still fuzzy-resemble a listed name; the eval should report such cases.
 - **Revisit if:** Matching scores near 100% (data too easy: add harder perturbations).
+
+## ADR-005: Name-only alerts from a blended fuzzy score; DOB as evidence
+- **Date:** 2026-11-23
+- **Decision:** Score every list name (primary, strong alias, weak alias x0.9) with
+  max(token_sort, token_set - 0.06 per word-count difference) using rapidfuzz. Alert when
+  the best score >= 0.88. DOB and nationality checks are attached to each candidate but do
+  not change the score or the alert. Prefilter with both scorers (union).
+- **Alternatives:** Jaro-Winkler per token; phonetic keys (Double Metaphone); combining DOB
+  into one score; an embedding model; an LLM matcher.
+- **Why:** Explainable to a reviewer and a model-risk team (two named, standard measures plus
+  one penalty), fast enough (about 30 ms per customer against 7.5k individuals), and keeping
+  DOB out of the alert avoids hiding hits where the list DOB is missing or vague. An LLM
+  matcher would be slower, costlier and hard to validate for a regulated control.
+- **Revisit if:** The held-out eval shows the dev misses (dropped name + typo) matter, then
+  try per-token fuzzy matching; or the harder clean set shows too many false alerts.
