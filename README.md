@@ -37,9 +37,20 @@ Both evals also found bugs in my own checks; they are listed in the write-up.
 
 ```bash
 python3.13 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m pytest -q          # offline, no API key needed
-cp .env.example .env                   # only needed for live runs; never commit .env
+.venv/bin/python -m pytest -q                 # offline, no API key needed
+.venv/bin/python -m scripts.download_ofac     # public OFAC list into data/ (needed for the demo)
 ```
+
+Demo (no API key, no cost: replays recorded model notes), in two terminals:
+
+```bash
+.venv/bin/uvicorn screening.service:app_from_env --factory --host 127.0.0.1 --port 8000
+.venv/bin/streamlit run ui/reviewer.py --server.address localhost --server.port 8501
+```
+
+Open http://localhost:8501, pick an alert, read the note, clear or escalate, see the audit trail.
+The demo needs the same OFAC snapshot the notes were recorded on (sha256 in `evaluation/note_cases.json`);
+a newer list download makes the demo refuse to start rather than replay mismatched cases.
 
 ## Status
 

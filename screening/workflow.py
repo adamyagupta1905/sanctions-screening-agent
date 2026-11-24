@@ -62,6 +62,7 @@ class ReviewDecision(BaseModel):
 
 
 class CaseState(TypedDict, total=False):
+    run_id: str  # one screening run (the workflow thread id); a customer can have many
     case_ref: str
     customer: Customer
     documents: list[CustomerDocument]
@@ -114,8 +115,8 @@ def build_workflow(
     """list_snapshot: e.g. the OFAC SDN.CSV sha256, recorded on every screening event."""
     model_name = getattr(llm, "model_name", type(llm).__name__)
 
-    def emit(step: str, ref: str, **details: Any) -> dict[str, Any]:
-        event = {"step": step, "case_ref": ref,
+    def emit(step: str, ref: str, run_id: str | None = None, **details: Any) -> dict[str, Any]:
+        event = {"step": step, "case_ref": ref, "run_id": run_id,
                  "at": datetime.now(timezone.utc).isoformat(timespec="seconds"), **details}
         if audit is not None:
             audit.append(event)
@@ -129,7 +130,7 @@ def build_workflow(
             "case_ref": ref,
             "result": result,
             "status": "alert" if result.alert else "no_alert",
-            "events": [emit("screen", ref, alert=result.alert, top_score=top, n_candidates=len(result.candidates),
+            "events": [emit("screen", ref, run_id=state.get("run_id"), alert=result.alert, top_score=top, n_candidates=len(result.candidates),
                             threshold=result.threshold, list_snapshot=list_snapshot)],
         }
 
@@ -145,7 +146,7 @@ def build_workflow(
             "context": context,
             "rendered": rendered,
             "note_attempts": 0,
-            "events": [emit("build_context", state["case_ref"],
+            "events": [emit("build_context", state["case_ref"], run_id=state.get("run_id"),
                             redactions=context.redaction_counts, injection_flags=flags)],
         }
 
@@ -165,7 +166,7 @@ def build_workflow(
             "note": None if new_problems else note,
             "note_problems": new_problems,
             "note_attempts": attempt,
-            "events": [emit("draft_note", state["case_ref"], attempt=attempt, model=model_name, prompt_version=PROMPT_VERSION,
+            "events": [emit("draft_note", state["case_ref"], run_id=state.get("run_id"), attempt=attempt, model=model_name, prompt_version=PROMPT_VERSION,
                               prompt_sha256=_sha256(SYSTEM_PROMPT + "\n" + prompt),
                               passed_checks=not new_problems, problems=new_problems, note_dropped=dropped)],
         }
@@ -192,13 +193,13 @@ def build_workflow(
             except ValidationError as exc:
                 payload = {**payload, "decision_error": str(exc)}
         return {"decision": decision,
-                "events": [emit("human_review", state["case_ref"], reviewer=decision.reviewer,
+                "events": [emit("human_review", state["case_ref"], run_id=state.get("run_id"), reviewer=decision.reviewer,
                                   disposition=decision.disposition.value, reason=decision.reason)]}
 
     def record(state: CaseState) -> dict:
         d = state["decision"]
         return {"status": d.disposition.value,
-                "events": [emit("record", state["case_ref"], disposition=d.disposition.value, reviewer=d.reviewer)]}
+                "events": [emit("record", state["case_ref"], run_id=state.get("run_id"), disposition=d.disposition.value, reviewer=d.reviewer)]}
 
     def after_screen(state: CaseState) -> str:
         return "build_context" if state["result"].alert else END
@@ -223,7 +224,7 @@ def build_workflow(
 
 def start_case(app, thread_id: str, customer: Customer, documents: list[CustomerDocument] | None = None) -> dict:
     """Run until the case finishes (no alert) or pauses for review. Returns the state."""
-    return app.invoke({"customer": customer, "documents": documents or [], "events": []},
+    return app.invoke({"run_id": thread_id, "customer": customer, "documents": documents or [], "events": []},
                       {"configurable": {"thread_id": thread_id}})
 
 

@@ -160,3 +160,18 @@ Short records of choices that shape the system. Newest at the bottom.
 - **Limits:** Model ID and prices were taken from Google's docs on 2026-11-24 (Flash on
   introductory pricing until 2026-12-31). Structured-output behaviour on this model is
   confirmed only once a live call succeeds.
+
+## ADR-011: FastAPI service + Streamlit reviewer page, key-free demo by replay
+- **Date:** 2026-11-24
+- **Decision:** `screening/service.py` wraps the workflow (start case, get review payload, submit
+  decision, audit trail, chain check) on SQLite storage. `ui/reviewer.py` is a thin Streamlit
+  client over HTTP. Demo mode replays the 38 recorded Gemini notes with the eval salt and frozen
+  cases, so it runs with no key and no cost. Both bind to localhost.
+- **Alternatives:** Streamlit calling the workflow directly; a React front end; Gradio.
+- **Why:** An HTTP boundary is how a bank would integrate it (case systems call an API) and
+  keeps the UI replaceable; Streamlit is enough for an analyst-facing demo. Replay makes the
+  demo reproducible and free, which matters for recruiters running it.
+- **Found while clicking through:** Streamlit listened on all interfaces by default (fixed:
+  localhost), and two screenings of one customer shared a case_ref in the audit log with no
+  way to tell runs apart (fixed: `run_id` on every event; regression test).
+- **Revisit if:** Multiple analysts or processes write concurrently (SQLite single-writer).

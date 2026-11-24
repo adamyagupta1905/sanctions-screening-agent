@@ -91,12 +91,14 @@ class AuditLog:
                 raise
         return AuditRow(cur.lastrowid, event["case_ref"], event["step"], event["at"], json.loads(payload), h)
 
-    def case_history(self, case_ref: str) -> list[AuditRow]:
+    def case_history(self, case_ref: str, run_id: str | None = None) -> list[AuditRow]:
+        """All events for a customer's case_ref; pass run_id to get one screening run only."""
         rows = self._conn.execute(
             "SELECT seq, case_ref, step, at, payload, hash FROM audit_events WHERE case_ref=? ORDER BY seq",
             (case_ref,),
         ).fetchall()
-        return [AuditRow(s, c, st, at, json.loads(p), h) for s, c, st, at, p, h in rows]
+        out = [AuditRow(s, c, st, at, json.loads(p), h) for s, c, st, at, p, h in rows]
+        return [r for r in out if run_id is None or r.event.get("run_id") == run_id]
 
     def verify(self) -> int | None:
         """Recompute the whole chain. Returns the seq of the first bad row, or None if intact."""

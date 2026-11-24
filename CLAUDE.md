@@ -13,7 +13,12 @@ reviewer makes the final decision, with every step written to an audit log.
 - Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
   (or `--from-dir DIR` to parse files already on disk)
 - Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
-- Run: not built yet (planned: FastAPI service + Streamlit reviewer UI)
+- Run demo (no key, replays recorded Gemini notes), two terminals:
+  `.venv/bin/uvicorn screening.service:app_from_env --factory --host 127.0.0.1 --port 8000`
+  `.venv/bin/streamlit run ui/reviewer.py --server.address localhost --server.port 8501`
+  Live mode: `SCREENING_MODE=live SCREENING_PROVIDER=gemini CASE_REF_SALT=<16+ chars>` (costs money).
+  Workspace `.claude/launch.json` has both; the preview launcher cannot read ~/Desktop (macOS
+  privacy), so start them from a shell and open http://localhost:8501.
 - Case-note eval, replay (free): `.venv/bin/python -m evaluation.run_note_eval --provider gemini|claude`
 - Case-note eval, LIVE (costs money, only when the user authorises in chat):
   `.venv/bin/python -m evaluation.run_note_eval --provider gemini --live [--max-cases 3] [--model ID]`
@@ -36,6 +41,7 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/case_note.py`: versioned case-note prompt + deterministic checks on every LLM note
 - `screening/workflow.py`: LangGraph graph (screen -> context -> note -> human interrupt -> record)
 - `screening/audit.py`: append-only (SQLite triggers), sha256-chained audit log; `verify()` finds tampering
+- `screening/service.py`: FastAPI app (`create_app`, `app_from_env`); `ui/reviewer.py`: Streamlit page
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
 - `evaluation/note_cases.json`, `note_scoring.py`, `cassette.py`, `run_note_eval.py`: case-note eval
@@ -58,6 +64,9 @@ reviewer makes the final decision, with every step written to an audit log.
 - Audit log is append-only and hash-chained; every event carries case_ref (never customer id),
   step, time; screening events carry the list snapshot sha256. No raw customer data in events.
 - Case state (checkpointer SQLite) holds customer data: keep it under `data/` (gitignored).
+- Servers bind to localhost only. No endpoint edits/deletes audit rows or closes a case except a
+  reviewer decision. API responses never include customer id, DOB or raw documents.
+- Every audit event carries `run_id` (one screening run); `case_ref` alone can span several runs.
 - Only public lists and synthetic customers. No real customer data, ever.
 - List data is kept as published (raw DOB text like "circa 1960"); a malformed file stops
   the load with an error; orphan rows are counted in the manifest, never silently dropped.
