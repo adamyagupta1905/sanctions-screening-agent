@@ -24,12 +24,18 @@ class Customer(BaseModel):
 
 
 class SanctionsEntry(BaseModel):
-    entry_id: str  # e.g. OFAC SDN uid
+    """One OFAC SDN record. Values are kept as published; nothing is guessed."""
+
+    entry_id: str  # OFAC ent_num (internal id, not an official reference)
     primary_name: str
-    aliases: list[str] = Field(default_factory=list)
-    program: str | None = None
-    date_of_birth: date | None = None
-    nationality: str | None = None
+    entity_type: str | None = None  # "individual", "vessel", "aircraft"; None = entity
+    programs: list[str] = Field(default_factory=list)
+    title: str | None = None
+    aliases: list[str] = Field(default_factory=list)  # strong aliases from ALT.CSV
+    weak_aliases: list[str] = Field(default_factory=list)  # from Remarks; lower quality
+    dates_of_birth: list[str] = Field(default_factory=list)  # raw text, e.g. "circa 1960"
+    nationalities: list[str] = Field(default_factory=list)
+    remarks: str | None = None
 
 
 class MatchCandidate(BaseModel):

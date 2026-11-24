@@ -8,12 +8,16 @@ reviewer makes the final decision, with every step written to an audit log.
 - Setup: `python3.13 -m venv .venv && .venv/bin/pip install -r requirements.txt`
 - Tests (offline, no key, seconds): `.venv/bin/python -m pytest -q`
 - Offline eval: `.venv/bin/python -m evaluation.run_eval`
+- Download OFAC list (network, free public data): `.venv/bin/python -m scripts.download_ofac`
+  (or `--from-dir DIR` to parse files already on disk)
 - Run: not built yet (planned: FastAPI service + Streamlit reviewer UI)
 - Live eval (costs money, only when the user authorises): not built yet
 
 ## Layout
 - `screening/llm.py`: only module that imports the model SDK (`StructuredLLM` protocol + `ClaudeLLM`)
 - `screening/models.py`: Pydantic domain models; docstring says who fills each field
+- `screening/ofac.py`: pure parser for OFAC SDN legacy CSVs (SDN, ALT, SDN_COMMENTS)
+- `scripts/download_ofac.py`: download + provenance manifest (sha256) + `data/ofac/entries.jsonl`
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: answer key, eval scripts, committed results
 - `docs/DECISIONS.md`: ADRs
@@ -30,6 +34,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - PII is redacted/minimised before any LLM call (once the redaction step exists).
 - Audit log is append-only: who/what/when/inputs-hash/model/prompt-version for each step.
 - Only public lists and synthetic customers. No real customer data, ever.
+- List data is kept as published (raw DOB text like "circa 1960"); a malformed file stops
+  the load with an error; orphan rows are counted in the manifest, never silently dropped.
 
 ## Conventions
 - Type hints and Pydantic models at module boundaries.

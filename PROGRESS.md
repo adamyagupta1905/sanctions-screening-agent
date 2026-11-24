@@ -13,12 +13,24 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
 - [x] `screening/llm.py` adapter (`StructuredLLM` protocol, `ClaudeLLM`, refusal/truncation errors)
 - [x] `screening/models.py` domain models (Customer, SanctionsEntry, MatchCandidate, CaseNote, Disposition)
 - [x] Offline tests incl. "only llm.py imports the SDK" invariant test
+- [x] OFAC parser (`screening/ofac.py`) + download script (`scripts/download_ofac.py`) with sha256 manifest; tested offline on fictional fixtures
+
+- [x] First live OFAC download (2026-11-24 01:47 UTC): URLs confirmed working. 19,629 entries
+      (10,144 entities, 7,573 individuals, 1,570 vessels, 342 aircraft), 20,257 aliases,
+      36 comment spillovers, 0 orphans. 7,503/7,573 individuals have a DOB.
+- [x] Fixed: live SDN_COMMENTS.CSV has 2 columns, not the 12 in OFAC's 2023 spec (regression test added).
 
 ## In progress
-- [ ] Nothing yet; next step below.
+- [ ] Nothing; next step below.
+
+## Findings that shape the matching step
+- DOBs are mixed precision: ~1,000 are year-only ("1965"), most are "dd Mon yyyy", some "circa".
+  Matching must compare at the precision given, never pad a year to a full date.
+- ~45% of entries have strong aliases; weak a.k.a.s (2,624 entries) should score lower.
+- Entity types differ: customer screening should match individuals vs. individuals first.
 
 ## Next up (v1 checklist)
-1. Data: script to download the public OFAC SDN list into `data/` (gitignored), parse to `SanctionsEntry`.
+1. ~~Data download + parse~~ done.
 2. Synthetic customers generator: clean names, transliterations, aliases, DOB conflicts, true hits.
 3. Deterministic matching (`screening/matching.py`): normalisation + fuzzy scoring + DOB/nationality checks; exact-match baseline.
 4. Answer key + eval (`/llm-eval`): precision/recall of matching vs. baseline, committed results.
@@ -33,11 +45,14 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-23 OFAC via legacy CSV + provenance manifest; DOBs kept as raw text. (ADR-003)
 - 2026-11-23 Structured output via `messages.parse` + Pydantic. **Why:** one schema end to end. (ADR-002)
 - 2026-11-23 Sanctions/KYC screening agent chosen. **Why:** covers agents, MCP, eval, guardrails, observability, model risk. (ADR-001)
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 9 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 21 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Evals: not built (answer key has 0 cases)
 - Not verified: `ClaudeLLM` has never made a live API call (tested only with a fake client).
+- Verified live: OFAC URLs and layout (2026-11-24). `--from-dir` run manually, no unit test.
+- Not verified: weak-alias/DOB/nationality extraction checked by counts only, not hand-audited.

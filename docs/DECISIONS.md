@@ -25,3 +25,15 @@ Short records of choices that shape the system. Newest at the bottom.
 - **Why:** SDK validates against the same Pydantic models the rest of the code uses.
 - **Revisit if:** First live run: decide whether to enable server-side refusal fallbacks
   (beta). Not enabled yet because it has not been verified against a live call.
+
+## ADR-003: OFAC ingestion from legacy CSV with a provenance manifest
+- **Date:** 2026-11-23
+- **Decision:** Ingest SDN.CSV + ALT.CSV (+ optional SDN_COMMENTS.CSV) with stdlib `csv` and
+  `urllib`. Save the exact bytes per run, and write `manifest.json` with URL, sha256, size,
+  encoding and row/orphan counts. Keep DOB/nationality as raw strings from Remarks.
+- **Alternatives:** SDN_ADVANCED.XML (richer, structured DOBs, much more complex schema);
+  third-party aggregators like OpenSanctions (easier, but adds a licence and a middleman).
+- **Why:** CSV layout is short and documented (OFAC dat_spec.txt); the sha256 snapshot
+  makes every screening result reproducible for audit; raw strings avoid inventing precision.
+- **Revisit if:** DOB matching needs structured dates/ranges (move to SDN_ADVANCED.XML), or
+  OFAC retires the legacy CSVs.
