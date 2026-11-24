@@ -1,0 +1,110 @@
+{
+ "07be64674562cc05f8ccacaa84971e48ab82272f141fd968a68b600583e72b2c": {
+  "model": "gemini-3.8-flash",
+  "output": {
+   "claims": [
+    {
+     "evidence_ids": [
+      "CUST"
+     ],
+     "statement": "Customer name is listed as Maria Vasilkova."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Candidate M1 is listed on the OFAC SDN list as VASILKOVA, Maria Viktorovna."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Candidate M1 has a listed date of birth of 13 Feb 1978 and Russian nationality."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Candidate M1 is subject to secondary sanctions risk under Executive Order 14024 as a Member of the State Duma of the Federal Assembly of the Russian Federation."
+    }
+   ],
+   "open_questions": [
+    "Does customer onboarding documentation show the patronymic name Viktorovna or additional identification verifying or disproving the match?",
+    "Does the customer's occupational or background profile indicate political exposure linked to the Russian State Duma?"
+   ],
+   "recommendation": "The analyst should prioritize comparing the customer's full identity documents and middle/patronymic name against candidate M1 to assess whether the customer is the designated State Duma member.",
+   "summary": "The screening alert matched customer Maria Vasilkova against OFAC SDN candidate VASILKOVA, Maria Viktorovna with a match score of 0.94 above the 0.88 threshold. Deterministic checks indicate an exact date of birth match and a nationality match with Russia. Candidate M1 is designated under program RUSSIA-EO14024 as a Member of the State Duma of the Russian Federation."
+  },
+  "recorded_at": "2026-11-24T02:47:09+00:00"
+ },
+ "265d5d14e556cb6e75b8843caf129f5e8550cd9eb2cfa84919bcb8550ba4a1f0": {
+  "model": "gemini-3.8-flash",
+  "output": {
+   "claims": [
+    {
+     "evidence_ids": [
+      "CUST"
+     ],
+     "statement": "The customer's recorded name is Huihui Wu."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "OFAC SDN candidate M1 lists the primary name WU, Huihui with DPRK3 program designations."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Candidate M1 lists a date of birth of 15 Dec 1988, place of birth in Shandong, China, and Chinese nationality."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Candidate M1 includes Chinese Passport E59165201, Identification Number 371326198812157611, and links to the Lazarus Group alongside numerous digital currency addresses."
+    }
+   ],
+   "open_questions": [
+    "Does the customer's Chinese national identity card number or passport number match the identification details listed on candidate M1?",
+    "Do any customer account activities or records correspond to the Bitcoin wallet addresses specified in candidate M1's remarks?"
+   ],
+   "recommendation": "The analyst should compare the customer's government-issued identification documents against the Chinese passport and national ID numbers in M1, and check transaction history against the listed digital currency addresses to evaluate potential escalation.",
+   "summary": "Customer Huihui Wu generated an alert against OFAC SDN entry WU, Huihui under the DPRK3 sanctions program with a match score of 1.0. Deterministic checks established an exact date of birth match and a nationality match. The sanctions record also provides specific national identification numbers, passport details, and cryptocurrency addresses for verification."
+  },
+  "recorded_at": "2026-11-24T02:47:58+00:00"
+ },
+ "aec15fc01889be394c6d3c279ba382742e19c7af4af8da0cf657698afc53dba7": {
+  "model": "gemini-3.8-flash",
+  "output": {
+   "claims": [
+    {
+     "evidence_ids": [
+      "CUST"
+     ],
+     "statement": "The customer's name on file is Jaime Galeano."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "Sanctions entry 11826 lists the primary name JEREZ GALEANO, Jaime under the SDNTK program."
+    },
+    {
+     "evidence_ids": [
+      "M1"
+     ],
+     "statement": "The sanctions entry records a date of birth of 08 Apr 1969, place of birth in Bogota, Colombia, and Cedula No. 79484852 (Colombia)."
+    }
+   ],
+   "open_questions": [
+    "Does the customer have a full compound surname (including Jerez) matching the list entry?",
+    "Do the customer's records contain nationality, place of birth, or Colombian national identification (Cedula) data to compare against M1?"
+   ],
+   "recommendation": "The analyst should inspect the customer's complete identification documentation to determine whether their full legal surname includes 'Jerez' and verify if their place of birth or Colombian national ID matches the details in M1.",
+   "summary": "Customer Jaime Galeano generated an alert against sanctions candidate JEREZ GALEANO, Jaime with a match score of 0.94, exceeding the 0.88 threshold. The computed date of birth comparison resulted in an exact match, while the nationality comparison is unknown. The sanctions record also lists Colombian identification and place of birth details for the individual."
+  },
+  "recorded_at": "2026-11-24T02:47:36+00:00"
+ }
+}

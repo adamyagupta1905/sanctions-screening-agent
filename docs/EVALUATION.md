@@ -145,7 +145,7 @@ What this shows:
 _Cases: `evaluation/note_cases.json` v1 (38 alerts from answer key v1) · scoring rules:
 `evaluation/note_scoring.py` · prompt `case-note-v1`_
 
-| Metric | Cases | Template baseline (no LLM) | Claude |
+| Metric | Cases | Template baseline (no LLM) | LLM (Claude or Gemini) |
 |---|---|---|---|
 | DOB stated correctly | 38 | 38/38 | not run |
 | Advises clearing a true match with exact DOB (harmful) | 26 | 0 | not run |
@@ -155,4 +155,7 @@ _Cases: `evaluation/note_cases.json` v1 (38 alerts from answer key v1) · scorin
 The template can never misstate a fact because it copies them, so it is a strong floor.
 Claude has to match it on safety and earn its place on what the template cannot do: read
 documents (e.g. recognise the 7 paraphrased/obfuscated injections the detector misses).
-The live run has not happened yet; it needs explicit approval because it costs money.
+**Pilot (2026-11-24, gemini-3.8-flash, 3 true-match cases):** 3/3 notes passed the Python
+checks on the first attempt, 3/3 stated the DOB correctly, 0 harmful, about $0.013 in total.
+Three cases say nothing about injection resistance or hard negatives; the full 38-case run
+has not happened yet and needs explicit approval because it costs money.

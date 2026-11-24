@@ -53,12 +53,24 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       injection documents recognised (exactly the detector-flagged ones). Fixed a scoring bug
       (within-span DOB scored as unknown); regression test.
 
-## In progress
-- [ ] Live case-note run: NOT run. Needs the user's OK in chat. Plan: pilot `--max-cases 3`,
-      then full 38 cases on claude-opus-5-5 (38-76 calls, rough estimate $2-5).
+## Claude note run (on hold)
+- [ ] Claude live run: not run; no Anthropic credentials. Estimate 38-76 calls, $2-5.
       2026-11-24: pilot approved but not run: no Anthropic credentials in the shell (`ant` CLI
-      not installed, no ANTHROPIC_API_KEY); nothing billed. User has a Gemini key instead:
-      a Gemini adapter behind `StructuredLLM` is possible but not agreed (provider decision).
+      not installed, no ANTHROPIC_API_KEY); nothing billed. User has a Gemini key instead.
+- [x] Gemini adapter added (ADR-010): `GeminiLLM`, `--provider gemini`, per-provider cassettes,
+      `.env` loaded in live mode only. Tested offline with a fake client.
+- [x] Live Gemini pilot (2026-11-24, user-approved): 3 cases (N01-N03, true_exact) on
+      gemini-3.8-flash. 3 calls, all passed the Python checks first time, 3/3 DOB correct,
+      0 harmful. Measured 2,873 input + 2,781 output tokens, about $0.013. Notes read by hand:
+      cited, used only computed numbers, turned public list details into concrete checks.
+      Cassette committed: `evaluation/cassettes/case_notes_v1_gemini.json`.
+- [x] Fixed: LangGraph warned it was deserialising unregistered types from checkpoints (to
+      be blocked in a future version). Allow-list in `screening/workflow.py`; passes with
+      LANGGRAPH_STRICT_MSGPACK=true; regression test.
+
+## In progress
+- [ ] Full Gemini note run: 38 cases, 38-76 calls. From pilot usage (~960 in / ~930 out
+      tokens per call): about $0.16-0.32. Needs the user's OK.
 - [x] `ClaudeLLM` now logs token usage per call; runner reports totals. Fixed: a failed live
       run wrote an empty cassette that would have broken replay; regression test.
 
@@ -108,6 +120,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-24 Gemini added behind the same adapter; provider chosen per eval run. (ADR-010)
 - 2026-11-24 Case notes scored by rules vs a template baseline; cassettes keyed by prompt hash. (ADR-009)
 - 2026-11-24 Separate append-only hash-chained audit log; checkpoints are not the audit trail. (ADR-008)
 - 2026-11-24 Fixed LangGraph flow with human interrupt; LLM note checked in Python. (ADR-007)
@@ -121,7 +134,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 141 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 154 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Injection checks: deterministic, `evaluation/results/injection_checks_v1_2026-11-24.json`.
 - Evals: matching eval run 2026-11-24 on key v1 (deterministic, no model); results in
   `evaluation/results/matching_key-v1_2026-11-24.json`. LLM evals: not built.

@@ -136,3 +136,9 @@ def test_save_with_no_records_writes_nothing(tmp_path):
     path = tmp_path / "sub" / "c.json"
     RecordingLLM(ScriptedLLM([])).save(path)
     assert not path.exists()
+
+
+def test_cassettes_are_per_provider_and_provider_is_validated():
+    assert run_note_eval.cassette_path("gemini") != run_note_eval.cassette_path("claude")
+    with pytest.raises(ValueError):
+        run_note_eval.run(run_note_eval.ROOT / "data" / "ofac", provider="gpt")

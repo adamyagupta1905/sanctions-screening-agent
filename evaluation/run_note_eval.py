@@ -1,12 +1,13 @@
-"""Case-note eval: Claude (through the real workflow) vs a no-LLM template note.
+"""Case-note eval: an LLM (through the real workflow) vs a no-LLM template note.
 
-  .venv/bin/python -m evaluation.run_note_eval                 # replay cassette (free)
-  .venv/bin/python -m evaluation.run_note_eval --live          # CALLS CLAUDE, COSTS MONEY
-  .venv/bin/python -m evaluation.run_note_eval --live --max-cases 3   # small paid pilot
+  .venv/bin/python -m evaluation.run_note_eval --provider gemini            # replay (free)
+  .venv/bin/python -m evaluation.run_note_eval --provider gemini --live     # COSTS MONEY
+  .venv/bin/python -m evaluation.run_note_eval --provider gemini --live --max-cases 3  # pilot
 
-Live mode needs ANTHROPIC_API_KEY (or `ant auth login`) and the user's explicit OK.
-It records every response to evaluation/cassettes/case_notes_v1.json so later runs replay
-for free. Without a cassette, only the template baseline is scored.
+Providers: claude (ANTHROPIC_API_KEY or `ant auth login`), gemini (GEMINI_API_KEY).
+Live mode loads the gitignored .env if present and needs the user's explicit OK.
+Each provider records to its own cassette, evaluation/cassettes/case_notes_v1_<provider>.json,
+so later runs replay for free. Without a cassette, only the template baseline is scored.
 """
 
 from __future__ import annotations
@@ -28,7 +29,23 @@ from screening.workflow import build_workflow, pending_review, start_case
 HERE = Path(__file__).parent
 ROOT = HERE.parent
 CASES = HERE / "note_cases.json"
-CASSETTE = HERE / "cassettes" / "case_notes_v1.json"
+PROVIDERS = ("claude", "gemini")
+
+
+def cassette_path(provider: str) -> Path:
+    return HERE / "cassettes" / f"case_notes_v1_{provider}.json"
+
+
+def _live_llm(provider: str, model: str | None):
+    """Only called in live mode: loads .env, builds the real adapter."""
+    from dotenv import load_dotenv  # keys go into the process env; never printed or logged
+
+    load_dotenv(ROOT / ".env", override=False)
+    from screening.llm import ClaudeLLM, GeminiLLM
+
+    if provider == "claude":
+        return ClaudeLLM(model=model) if model else ClaudeLLM()
+    return GeminiLLM(model=model) if model else GeminiLLM()
 EVAL_SALT = b"note-eval-salt-not-a-secret"  # fixed so prompts (and cassette keys) are stable
 
 
@@ -52,7 +69,11 @@ def _usage(llm) -> dict | None:
             "output_tokens": sum(c["output_tokens"] for c in calls)}
 
 
-def run(ofac_dir: Path, live: bool = False, max_cases: int | None = None) -> dict | None:
+def run(ofac_dir: Path, live: bool = False, max_cases: int | None = None,
+        provider: str = "claude", model: str | None = None) -> dict | None:
+    if provider not in PROVIDERS:
+        raise ValueError(f"provider must be one of {PROVIDERS}")
+    cassette = cassette_path(provider)
     data, entries = _load(ofac_dir)
     if entries is None:
         print(f"SKIPPED: {ofac_dir}/entries.jsonl not found.")
@@ -70,10 +91,9 @@ def run(ofac_dir: Path, live: bool = False, max_cases: int | None = None) -> dic
                               "verdict": score_note(template_note(ctx), ctx, case["group"])})
 
     if live:
-        from screening.llm import ClaudeLLM  # only imported when actually spending money
-        llm = RecordingLLM(ClaudeLLM())
-    elif CASSETTE.exists():
-        llm = ReplayLLM(CASSETTE)
+        llm = RecordingLLM(_live_llm(provider, model))
+    elif cassette.exists():
+        llm = ReplayLLM(cassette)
     else:
         llm = None
 
@@ -96,11 +116,12 @@ def run(ofac_dir: Path, live: bool = False, max_cases: int | None = None) -> dic
                                  "note": payload["note"], "verdict": score_note(note, state["context"], case["group"])})
         finally:
             if live:
-                llm.save(CASSETTE)
+                llm.save(cassette)
 
     return {
         "run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "mode": "live" if live else ("replay" if llm else "baseline_only"),
+        "provider": provider,
         "model": getattr(llm, "model_name", None),
         "prompt_version": PROMPT_VERSION,
         "note_cases_version": data["version"],
@@ -121,7 +142,7 @@ def run(ofac_dir: Path, live: bool = False, max_cases: int | None = None) -> dic
 def table(result: dict) -> str:
     b = result["baseline"]["summary"]["by_group"]
     m = result["llm"]["summary"]["by_group"] if result["llm"] else None
-    lines = ["| Group | n | Metric | Template | Claude |", "|---|---|---|---|---|"]
+    lines = ["| Group | n | Metric | Template | LLM |", "|---|---|---|---|---|"]
     for g in b:
         for metric in ("dob_correct", "advises_clearing", "mentions_injection"):
             bv = b[g][metric]
@@ -135,18 +156,21 @@ def table(result: dict) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--live", action="store_true", help="call Claude (costs money)")
+    parser.add_argument("--live", action="store_true", help="call the provider (costs money)")
+    parser.add_argument("--provider", choices=PROVIDERS, default="claude")
+    parser.add_argument("--model", help="override the provider's default model")
     parser.add_argument("--max-cases", type=int)
     parser.add_argument("--no-write", action="store_true")
     parser.add_argument("--ofac-dir", type=Path, default=ROOT / "data" / "ofac")
     args = parser.parse_args(argv)
-    result = run(args.ofac_dir, live=args.live, max_cases=args.max_cases)
+    result = run(args.ofac_dir, live=args.live, max_cases=args.max_cases,
+                 provider=args.provider, model=args.model)
     if result is None:
         return 0
     print(f"mode={result['mode']} model={result['model']} calls={result['model_calls']} usage={result['token_usage']}")
     print(table(result))
     if not args.no_write and result["mode"] != "baseline_only":
-        out = HERE / "results" / f"case_notes_{result['mode']}_{result['run_at'][:10]}.json"
+        out = HERE / "results" / f"case_notes_{result['provider']}_{result['mode']}_{result['run_at'][:10]}.json"
         out.write_text(json.dumps(result, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         print("wrote", out.relative_to(ROOT))
     return 0

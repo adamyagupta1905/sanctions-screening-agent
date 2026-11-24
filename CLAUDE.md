@@ -14,12 +14,14 @@ reviewer makes the final decision, with every step written to an audit log.
   (or `--from-dir DIR` to parse files already on disk)
 - Synthetic customers (needs the OFAC data): `.venv/bin/python -m scripts.generate_customers [--n 500 --seed 7]`
 - Run: not built yet (planned: FastAPI service + Streamlit reviewer UI)
-- Case-note eval, replay (free): `.venv/bin/python -m evaluation.run_note_eval`
-- Case-note eval, LIVE (costs money, only when the user authorises in chat; needs ANTHROPIC_API_KEY
-  exported or `ant auth login`): `.venv/bin/python -m evaluation.run_note_eval --live [--max-cases 3]`
+- Case-note eval, replay (free): `.venv/bin/python -m evaluation.run_note_eval --provider gemini|claude`
+- Case-note eval, LIVE (costs money, only when the user authorises in chat):
+  `.venv/bin/python -m evaluation.run_note_eval --provider gemini --live [--max-cases 3] [--model ID]`
+  Keys: GEMINI_API_KEY / ANTHROPIC_API_KEY from the environment or the gitignored `.env`
+  (loaded only in live mode). Never print, log or commit a key.
 
 ## Layout
-- `screening/llm.py`: only module that imports the model SDK (`StructuredLLM` protocol + `ClaudeLLM`)
+- `screening/llm.py`: only module importing a model SDK: `StructuredLLM` protocol, `ClaudeLLM`, `GeminiLLM`
 - `screening/models.py`: Pydantic domain models; docstring says who fills each field
 - `screening/ofac.py`: pure parser for OFAC SDN legacy CSVs (SDN, ALT, SDN_COMMENTS)
 - `scripts/download_ofac.py`: download + provenance manifest (sha256) + `data/ofac/entries.jsonl`

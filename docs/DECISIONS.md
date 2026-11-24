@@ -142,3 +142,21 @@ Short records of choices that shape the system. Newest at the bottom.
   Rules cannot judge readability; that is left to a human read and stated as a limit.
 - **Revisit if:** Rule verdicts disagree with a manual read of the notes; then add an
   LLM-judge for the disputed criteria, validated against those manual reads.
+
+## ADR-010: Second provider (Gemini) behind the same adapter interface
+- **Date:** 2026-11-24
+- **Decision:** Add `GeminiLLM` (google-genai, default `gemini-3.8-flash`) next to `ClaudeLLM`
+  in `screening/llm.py`. Both satisfy `StructuredLLM`; the eval runner takes `--provider`
+  and keeps one cassette and one results file per provider. Gemini receives the Pydantic
+  JSON schema as `response_json_schema`; the reply is validated by Pydantic locally, so
+  both providers face the identical schema check. Safety stops map to `LLMRefusal`,
+  truncation and schema failures to `LLMIncomplete`, so the workflow treats them the same.
+- **Alternatives:** Switch the project to Gemini entirely; a multi-provider library
+  (LiteLLM, LangChain chat models).
+- **Why:** The user has Gemini access and no Anthropic credentials today. Keeping both
+  behind one small interface leaves the rest of the system (checks, workflow, scoring,
+  audit) unchanged and makes a like-for-like provider comparison possible later. A
+  wrapper library would add a dependency for two methods' worth of code.
+- **Limits:** Model ID and prices were taken from Google's docs on 2026-11-24 (Flash on
+  introductory pricing until 2026-12-31). Structured-output behaviour on this model is
+  confirmed only once a live call succeeds.

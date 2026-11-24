@@ -44,7 +44,7 @@ def test_fake_llm_records_calls():
 
 
 def test_only_llm_module_imports_the_sdk():
-    """Invariant: the model SDK is isolated behind screening/llm.py."""
+    """Invariant: every model SDK (Anthropic, Google Gen AI) is isolated behind screening/llm.py."""
     root = Path(__file__).resolve().parents[1]
     offenders = []
     for path in root.rglob("*.py"):
@@ -56,7 +56,8 @@ def test_only_llm_module_imports_the_sdk():
                 names = [a.name for a in node.names]
             elif isinstance(node, ast.ImportFrom) and node.module:
                 names = [node.module]
-            if any(n.split(".")[0] == "anthropic" for n in names):
+            if any(n.split(".")[0] == "anthropic" or n.startswith("google.genai") or n == "google"
+                   for n in names):
                 offenders.append(str(path.relative_to(root)))
     assert offenders == []
 

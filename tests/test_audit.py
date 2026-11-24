@@ -122,3 +122,16 @@ def test_no_alert_screening_is_still_audited(tmp_path):
     start_case(_app(tmp_path, [], audit), "case-3", clean)
     hist = audit.case_history(case_ref("C9", SALT))
     assert [r.step for r in hist] == ["screen"] and hist[0].event["alert"] is False
+
+
+def test_checkpoints_only_hold_registered_types(tmp_path, caplog):
+    """Regression: LangGraph logged 'Deserializing unregistered type' for our Pydantic
+    models (to be blocked in a future version). Every stored type must be allow-listed."""
+    import logging
+    caplog.set_level(logging.WARNING)
+    audit = AuditLog(tmp_path / "audit.sqlite")
+    docs = [CustomerDocument(source="kyc_note", text="Some note.")]
+    start_case(_app(tmp_path, [GOOD], audit), "case-9", HIT, docs)
+    app2 = _app(tmp_path, [], AuditLog(tmp_path / "audit.sqlite"))  # restart: reload from disk
+    submit_decision(app2, "case-9", DECISION)
+    assert not [r for r in caplog.records if "unregistered type" in r.getMessage()]

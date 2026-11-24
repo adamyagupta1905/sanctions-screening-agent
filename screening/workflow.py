@@ -30,6 +30,7 @@ from datetime import datetime, timezone
 from typing import Annotated, Any, TypedDict
 
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
@@ -75,10 +76,26 @@ class CaseState(TypedDict, total=False):
     events: Annotated[list[dict[str, Any]], operator.add]
 
 
+# Exactly the types a checkpoint may contain. Anything else is refused on load instead of
+# being rebuilt from stored bytes (LangGraph warns on unregistered types and will block them).
+CHECKPOINT_TYPES = [
+    ("screening.models", "Customer"), ("screening.models", "ScreeningResult"),
+    ("screening.models", "MatchCandidate"), ("screening.models", "CaseNote"),
+    ("screening.models", "EvidenceClaim"), ("screening.models", "Disposition"),
+    ("screening.context", "CaseContext"), ("screening.context", "CandidateFacts"),
+    ("screening.context", "TextEvidence"), ("screening.context", "CustomerDocument"),
+    ("screening.workflow", "ReviewDecision"),
+]
+
+
+def checkpoint_serde() -> JsonPlusSerializer:
+    return JsonPlusSerializer(allowed_msgpack_modules=CHECKPOINT_TYPES)
+
+
 def sqlite_checkpointer(path: str) -> SqliteSaver:
     """Persistent store for paused cases (survives restarts). Holds full case state,
     including customer data: keep it in the same trust zone as the customer database."""
-    return SqliteSaver(sqlite3.connect(path, check_same_thread=False))
+    return SqliteSaver(sqlite3.connect(path, check_same_thread=False), serde=checkpoint_serde())
 
 
 def _sha256(text: str) -> str:
@@ -201,7 +218,7 @@ def build_workflow(
     graph.add_conditional_edges("draft_note", after_note, ["draft_note", "human_review"])
     graph.add_edge("human_review", "record")
     graph.add_edge("record", END)
-    return graph.compile(checkpointer=checkpointer or InMemorySaver())
+    return graph.compile(checkpointer=checkpointer or InMemorySaver(serde=checkpoint_serde()))
 
 
 def start_case(app, thread_id: str, customer: Customer, documents: list[CustomerDocument] | None = None) -> dict:
