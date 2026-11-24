@@ -38,6 +38,11 @@ append-only audit log, with an eval showing it beats an exact-match baseline.
       Detector flags 8/8 direct, 0/4 paraphrased, 1/4 obfuscated, 0/8 benign; containment
       (no escape from data blocks) 24/24.
 
+- [x] LangGraph workflow (`screening/workflow.py`, `screening/case_note.py`, ADR-007): screen ->
+      context -> LLM note (Python-checked, 1 retry, dropped if still failing) -> human interrupt
+      -> record. Tested on every path with a scripted fake LLM. Fixed: an invalid analyst decision
+      left the case permanently stuck (LangGraph replays the stored resume value); regression test.
+
 ## Preliminary dev numbers (seed 7, n=500, threshold 0.88) - NOT the eval result
 Tuning set only; the reported eval must use a different seed. Recall = source entry among
 candidates at >= threshold. Script was a scratch check, formal version comes in the eval step.
@@ -76,7 +81,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 4. ~~Answer key + eval~~ done for matching. Optional follow-up: per-token fuzzy matching for the
    dropped-name + typo misses (design on dev seed 7, re-measure on key v1).
 5. ~~PII redaction + injection guard~~ done (LLM-side injection eval comes with step 8).
-6. LangGraph workflow: screen -> gather evidence -> draft CaseNote -> human interrupt -> record disposition.
+6. ~~LangGraph workflow~~ done (offline; no live model call yet).
 7. Audit log (SQLite, append-only) with model, prompt version and input hashes.
 8. Case-note eval: citation validity (rules) + faithfulness (LLM-judge, live, only when authorised).
 9. MCP server exposing screening tools; FastAPI service; Streamlit reviewer UI.
@@ -86,6 +91,7 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - Refusal fallbacks (beta) not enabled in `ClaudeLLM`; decide at first authorised live run.
 
 ## Decisions (newest first)
+- 2026-11-24 Fixed LangGraph flow with human interrupt; LLM note checked in Python. (ADR-007)
 - 2026-11-24 Minimised case context; injection detection is a signal, never a gate. (ADR-006)
 - 2026-11-24 Held-out key (seed 2027) frozen and committed; threshold stays 0.88 from dev. **Why:** no tuning on the reported set.
 - 2026-11-23 Name-only alerts, blended fuzzy score, DOB/nationality as evidence. (ADR-005)
@@ -96,11 +102,14 @@ candidates at >= threshold. Script was a scratch check, formal version comes in 
 - 2026-11-23 Libraries added only when code uses them. **Why:** keep requirements honest and pinned.
 
 ## Verification status
-- Tests: 91 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
+- Tests: 109 passing, `.venv/bin/python -m pytest -q`, 2026-11-23
 - Injection checks: deterministic, `evaluation/results/injection_checks_v1_2026-11-24.json`.
 - Evals: matching eval run 2026-11-24 on key v1 (deterministic, no model); results in
   `evaluation/results/matching_key-v1_2026-11-24.json`. LLM evals: not built.
 - Not verified: `ClaudeLLM` has never made a live API call (tested only with a fake client).
+  The case-note prompt has never been run against Claude: quality, pass rate of the checks,
+  and resistance to the injection cases are all unmeasured (step 8, needs your OK for cost).
+- Not verified: checkpointer is in-memory only; paused cases are lost on restart (step 7).
 - Verified live: OFAC URLs and layout (2026-11-24). `--from-dir` run manually, no unit test.
 - Not verified: weak-alias/DOB/nationality extraction checked by counts only, not hand-audited.
 - Not verified: redactor on real-world document text (only synthetic strings); detector numbers on

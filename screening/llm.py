@@ -51,6 +51,10 @@ class ClaudeLLM:
         self._max_tokens = max_tokens
         self._effort = effort
 
+    @property
+    def model_name(self) -> str:
+        return self._model
+
     def extract(self, *, system: str, user: str, schema: type[T]) -> T:
         response = self._client.messages.parse(
             model=self._model,

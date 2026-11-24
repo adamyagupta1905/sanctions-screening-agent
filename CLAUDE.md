@@ -29,6 +29,8 @@ reviewer makes the final decision, with every step written to an audit log.
 - `screening/redaction.py`: regex PII redactor for customer-side free text (map stays local)
 - `screening/untrusted.py`: escaped `<data>` wrapping + injection pattern flags (signal, not a gate)
 - `screening/context.py`: minimised `CaseContext` + `render_for_prompt`: the only data a model sees
+- `screening/case_note.py`: versioned case-note prompt + deterministic checks on every LLM note
+- `screening/workflow.py`: LangGraph graph (screen -> context -> note -> human interrupt -> record)
 - `tests/`: offline tests with fakes (`tests/fakes.py`)
 - `evaluation/`: frozen held-out answer key (seed 2027), `scoring.py` (pure), `run_eval.py`, committed results
 - `docs/EVALUATION.md`: latest eval write-up
@@ -53,6 +55,9 @@ reviewer makes the final decision, with every step written to an audit log.
 - Alerts are name-only; DOB/nationality are evidence for the reviewer, never used to suppress
   an alert. The matcher must not reuse the generator's transliteration table (circular eval).
 - Tune thresholds on the dev seed only; report results on a held-out seed.
+- Only `human_review` sets a Disposition. LLM notes pass `check_case_note` (cited ids exist,
+  numbers equal computed facts, no outcome stated as decided) or are dropped after one retry.
+- Bump `PROMPT_VERSION` on any prompt change; events record it with a sha256 of the prompt.
 - Synthetic data must not leak its label: same name styling for every kind, ids assigned
   after shuffling. Anything a model could use as a shortcut gets a regression test.
 

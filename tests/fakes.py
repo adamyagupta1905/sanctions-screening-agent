@@ -31,3 +31,20 @@ class FakeAnthropicClient:
     def _parse(self, **kwargs: Any) -> Any:
         self.kwargs = kwargs
         return self._response
+
+
+class ScriptedLLM:
+    """Returns the next item of `script` on each call; an Exception item is raised."""
+
+    model_name = "scripted-fake"
+
+    def __init__(self, script: list[Any]) -> None:
+        self.script = list(script)
+        self.calls: list[dict[str, Any]] = []
+
+    def extract(self, *, system: str, user: str, schema: type) -> Any:
+        self.calls.append({"system": system, "user": user, "schema": schema})
+        item = self.script.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item

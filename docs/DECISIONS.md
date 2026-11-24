@@ -88,3 +88,21 @@ Short records of choices that shape the system. Newest at the bottom.
   no extra dependency for a small, testable set of identifiers.
 - **Revisit if:** The LLM case-note eval shows injected text changing recommendations, or
   documents contain PII types the regexes miss (then evaluate Presidio).
+
+## ADR-007: LangGraph workflow, LLM note checked in Python, human interrupt as the only decider
+- **Date:** 2026-11-24
+- **Decision:** A LangGraph `StateGraph`: screen -> build_context -> draft_note (max 2 attempts)
+  -> human_review (`interrupt`) -> record. The LLM fills a `CaseNote` schema with no score or
+  outcome field. Python checks every note: cited ids exist, any decimal equals a computed
+  score/threshold, any "N years" equals a computed DOB gap, no outcome stated as decided.
+  A failing note is retried once with the problems listed, then dropped; the case still goes
+  to the analyst. Each node appends an event (time, model, prompt version, prompt sha256).
+- **Alternatives:** A plain Python function chain; a tool-calling agent that decides which
+  evidence to fetch; Claude Managed Agents.
+- **Why:** The flow is fixed and must pause for days waiting for a person, then resume:
+  that is exactly checkpointing + interrupt, which LangGraph gives and a function chain
+  does not. A free-roaming agent adds model-chosen steps to a regulated control with no
+  benefit at this stage (all evidence is already gathered by code). Managed Agents would
+  host the loop remotely; here the loop is deterministic and must run next to the data.
+- **Revisit if:** Evidence gathering becomes open-ended (e.g. adverse-media search), which
+  is where model-chosen tool calls would earn their place.

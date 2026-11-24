@@ -1,5 +1,6 @@
 # Pinned. Add new libraries (langgraph, rapidfuzz, fastapi, ...) only when code uses them.
 anthropic==2.13.0
+langgraph==1.2.24
 pydantic==2.14.4
 pytest==9.2.0
 rapidfuzz==3.14.6
